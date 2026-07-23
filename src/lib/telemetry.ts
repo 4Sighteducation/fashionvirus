@@ -13,6 +13,7 @@ export type TelemetryEvent =
   | 'run_end'
 
 export function startRun(runId: string): void {
+  if (!supabase) return
   void supabase
     .from('runs')
     .insert({
@@ -36,6 +37,7 @@ export function logEvent(
     payload?: Record<string, unknown>
   },
 ): void {
+  if (!supabase) return
   void supabase
     .from('run_events')
     .insert({
