@@ -31,4 +31,8 @@ Environment variables (see `.env.example`):
 
 - `src/lib/supabase.ts` — Supabase client
 - `public/assets/scenes/` — Act 2 scene art, named by prompt ID (`a*` = wasteworld, `b*` = repaired world); see the README there
-- `docs/` — concept doc, image-generation prompt pack, art references
+- `public/assets/hinge/` — animated hinge sequences (video)
+- `public/assets/brand/` — logo / wordmark
+- `docs/` — concept doc, image-generation prompt pack, typography brief, art references
+
+Fonts (Bodoni Moda, Archivo, Space Mono) are self-hosted via Fontsource — see [docs/typography.md](docs/typography.md).

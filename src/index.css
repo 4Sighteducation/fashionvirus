@@ -4,6 +4,23 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Typography system — see docs: Bodoni = seduction, Archivo = the machine, Space Mono = evidence */
+  --font-display: 'Bodoni Moda Variable', 'Bodoni MT', Didot, serif;
+  --font-sans: 'Archivo Variable', Helvetica, Arial, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, Consolas, monospace;
+}
+
 body {
   margin: 0;
+  font-family: var(--font-sans);
+}
+
+/* The eyebrow — Archivo Narrow, letterspaced uppercase.
+   The most fashion-editorial trick in the system, one CSS rule. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-stretch: 62.5%;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
 }
