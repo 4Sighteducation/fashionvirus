@@ -1,0 +1,44 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #fdfdfb;
+  color: #111;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0;
+}
+
+.landing h1 {
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.landing .accent {
+  color: #9aa63a; /* the sickly yellow-green, waiting */
+}
+
+.tagline {
+  font-size: 1.25rem;
+  color: #333;
+  margin: 0;
+}
+
+.status {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 2rem;
+}
