@@ -30,5 +30,5 @@ Environment variables (see `.env.example`):
 ## Project layout
 
 - `src/lib/supabase.ts` — Supabase client
-- `public/assets/scenes/` — scene-setting art (`act2-*` = wasteworld, `repair-*` = the repair path)
-- `docs/` — concept doc and art references
+- `public/assets/scenes/` — Act 2 scene art, named by prompt ID (`a*` = wasteworld, `b*` = repaired world); see the README there
+- `docs/` — concept doc, image-generation prompt pack, art references
