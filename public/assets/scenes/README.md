@@ -27,4 +27,4 @@ Set A = the wasteworld (growth player's Act 2). Set B = the repaired world (sust
 - **B7** — the quiet warehouse
 - **A2 variants** — cobalt blue / chemical violet river (the river runs whatever colour the player shipped)
 
-Note: `b1-repair-hub.png` has visible signage ("MILL WORKSHOPS / GARMENT REPAIR & TEXTILES") — the prompt pack advises rejecting visible text; usable as placeholder, regenerate for the pitch deck.
+Note: `b1-repair-hub.png` ("MILL WORKSHOPS / GARMENT REPAIR & TEXTILES") and `b3-micro-mill-2.png` ("KELD TEXTILES") have visible signage — the prompt pack advises rejecting visible text; usable as placeholders, regenerate for the pitch deck.
