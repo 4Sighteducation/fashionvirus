@@ -1322,6 +1322,56 @@ button {
   color: #111;
 }
 
+/* ============ about — the concept walkthrough ============ */
+
+.about-panel {
+  padding: 0;
+  width: min(620px, calc(100vw - 2rem));
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.about-art {
+  height: clamp(150px, 26vh, 230px);
+  background-size: cover;
+  background-position: center 18%;
+  filter: saturate(0.85);
+  flex: none;
+}
+.about-text {
+  padding: 1.6rem 2.4rem 1.8rem;
+}
+.about-dots {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 1.3rem;
+}
+.about-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d6d5cc;
+}
+.about-dot-now {
+  background: #111;
+}
+
+.btn-about {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #8a8a84;
+  background: none;
+  border: none;
+  border-bottom: 1px dotted #b5b5ae;
+  padding: 0;
+  cursor: pointer;
+}
+.btn-about:hover {
+  color: #111;
+  border-bottom-color: #111;
+}
+
 /* ============ editorial backdrops ============ */
 
 .fanfare {
