@@ -2,7 +2,9 @@
 
 **Build a fashion empire. Face the fallout.**
 
-A browser-based game in two acts. Act 1: build a fashion label from bedroom to global — while a hidden ledger of environmental and human cost accumulates where you can't see it. Act 2: walk into the world you built.
+A browser-based game in two acts. Act 1: build a fashion label from bedroom to global across 16 seasons — while a hidden ledger of environmental and human cost accumulates where you can't see it. Act 2: five years of repair in the world you built.
+
+Alongside cash, heat and novelty, the game tracks **social capital** — trust, belonging, ambassadors. It's earned slowly (repair, transparency, staying local, paying properly) and it changes everything downstream: it buffers the novelty trap, absorbs one crisis, brings named allies into the run, unlocks community repairs and volunteer discounts in Act 2, and decides whether you face the ending alone or held. Damage decides the world; social capital decides the company you keep in it.
 
 Full concept: [docs/fashion-virus-concept-v0.3.md](docs/fashion-virus-concept-v0.3.md)
 
@@ -30,6 +32,7 @@ Environment variables (see `.env.example`):
 ## Project layout
 
 - `src/lib/supabase.ts` — Supabase client
+- `public/assets/cards/` — card artwork, one file per card id (`<cardId>.jpeg/.png`); crisis cards use no photography by design
 - `public/assets/scenes/` — Act 2 scene art, named by prompt ID (`a*` = wasteworld, `b*` = repaired world); see the README there
 - `public/assets/hinge/` — animated hinge sequences (video)
 - `public/assets/brand/` — logo / wordmark

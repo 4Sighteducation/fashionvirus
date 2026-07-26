@@ -1,4 +1,54 @@
-import type { Ledger, Repair, Whisper } from './types'
+import type { Ally, Ledger, Repair, Whisper } from './types'
+
+// ─── Allies — social capital, made into people. ───
+// They join at milestones in Act 1 and are still there in Act 2.
+// That is the entire point of them.
+
+export const ALLIES: Ally[] = [
+  {
+    id: 'yan_rong',
+    name: 'Yan Rong',
+    threshold: 25,
+    joinLine: 'Yan Rong starts a Tuesday mending class in the studio. You didn’t ask her to.',
+    act2Line: 'Yan Rong’s Tuesday class has a waiting list. She has trained four teachers.',
+  },
+  {
+    id: 'geography_teacher',
+    name: 'The geography teacher',
+    threshold: 45,
+    joinLine: 'The geography teacher who once tagged you in a beach photo writes again — this time about her class’s repair project.',
+    act2Line: 'The geography teacher brings a school group to the hub every term. They map where clothes go.',
+  },
+  {
+    id: 'youth_ambassadors',
+    name: 'The youth ambassadors',
+    threshold: 65,
+    joinLine: 'Six teenagers run your resale pop-up better than your retail team ever did. They call themselves the ambassadors.',
+    act2Line: 'The ambassadors run three pop-ups now. Nobody in them has ever met you.',
+  },
+  {
+    id: 'volunteer_corps',
+    name: 'The volunteer corps',
+    threshold: 85,
+    joinLine: 'There is a waiting list to volunteer. Forty names. People want to be part of what you’re making.',
+    act2Line: 'Saturday mornings, the yard fills with volunteers before the kettle has boiled.',
+  },
+]
+
+export const allyById = (id: string): Ally => {
+  const ally = ALLIES.find((a) => a.id === id)
+  if (!ally) throw new Error(`Unknown ally: ${id}`)
+  return ally
+}
+
+/** Low social capital in Act 2 reads as isolation — one line per year. */
+export const ISOLATION_LINES = [
+  'You make calls. Nobody returns them.',
+  'The contractors quote full rate, cash up front. There is no goodwill to draw on.',
+  'The consultation meeting is you, the consultant, and empty chairs.',
+  'A local paper covers the repair work. Nobody local is quoted, because nobody local was involved.',
+  'You do the work anyway. Alone is slower.',
+]
 
 // ─── Threshold whispers — peripheral, one line, easy to ignore. ───
 // (Cards also carry their own whispers; these fire on ledger milestones.)
@@ -104,7 +154,35 @@ export const REPAIRS: Repair[] = [
     heals: { labour: 35, waste: 5, land: 5 },
     indicator: 'The trust’s first AGM ran four hours. Nobody asked about you.',
   },
+  // ── Community repairs — only exist if you built the community. ──
+  {
+    id: 'youth_programme',
+    title: 'The youth programme',
+    body: 'The ambassadors want to teach. Give them a budget, a room, and get out of the way. They reach people you never could.',
+    cost: 12,
+    heals: { labour: 25, waste: 4 },
+    indicator: 'A sixteen-year-old explains garment lifecycles to a council committee. The committee listens.',
+    requiresSocial: 45,
+  },
+  {
+    id: 'volunteer_days',
+    title: 'Volunteer restoration days',
+    body: 'The waiting list becomes a workforce. Riverbank clearances, mending marathons, planting on the capped mound. You supply tools and tea.',
+    cost: 5,
+    heals: { waste: 5, land: 8, labour: 10, water: 0.3 },
+    indicator: 'Two hundred people came on Saturday. It rained. They stayed.',
+    requiresSocial: 65,
+  },
 ]
+
+/** What a repair actually costs: scaled up by damage, down by community.
+ *  Below social 25 nobody shows up; at 100 volunteers take 40% off;
+ *  the youth programme compounds it. */
+export function repairCost(repair: Repair, damage: number, social: number, repairsChosen: string[]): number {
+  const volunteers = social >= 25 ? 0.4 * (social / 100) : 0
+  const communityDiscount = volunteers + (repairsChosen.includes('youth_programme') ? 0.1 : 0)
+  return Math.max(2, Math.round(repair.cost * (1 + damage) * (1 - Math.min(0.5, communityDiscount))))
+}
 
 export const repairById = (id: string): Repair => {
   const repair = REPAIRS.find((r) => r.id === id)
@@ -167,8 +245,12 @@ export function dominantDamage(ledger: Ledger): keyof Ledger {
   return worst
 }
 
-export function act2Scene(ledger: Ledger, damage: number): string {
-  if (damage < 0.3) return '/assets/scenes/b2-living-river.png'
+export function act2Scene(ledger: Ledger, damage: number, social = 0): string {
+  if (damage < 0.3) {
+    // The clean world with people in it is a different picture from
+    // the clean world without them.
+    return social >= 50 ? '/assets/scenes/b1-repair-hub.png' : '/assets/scenes/b2-living-river.png'
+  }
   const scenes: Record<keyof Ledger, string> = {
     water: '/assets/scenes/a2-dye-river.png',
     waste: '/assets/scenes/a1-textile-mountain.png',
@@ -184,36 +266,73 @@ export interface Ending {
   headline: string
   sub: string
   register: 'clean' | 'hard' | 'bleak' | 'folded'
+  /** The social axis: did anyone stand with you at the end? */
+  held: boolean
 }
 
-export function ending(cashK: number, damage: number, folded: boolean): Ending {
+/** Not a happy ending — a different one. Damage decides the world;
+ *  social capital decides whether you face it alone. */
+export function ending(cashK: number, damage: number, folded: boolean, social = 0): Ending {
   const money =
     cashK >= 1000 ? `£${(cashK / 1000).toFixed(1)} million` : `£${Math.max(0, Math.round(cashK))},000`
+  const held = social >= 50
 
   if (folded) {
-    return {
-      headline: 'The label folds.',
-      sub: 'No awards, no exposé, no epilogue. The stock is in a warehouse somewhere, still wrapped.',
-      register: 'folded',
-    }
+    return held
+      ? {
+          headline: 'The label folds. The people don’t.',
+          sub: 'The stock is in a warehouse somewhere, still wrapped. The Tuesday class still runs. The things you built that were never for sale are still standing.',
+          register: 'folded',
+          held,
+        }
+      : {
+          headline: 'The label folds.',
+          sub: 'No awards, no exposé, no epilogue. The stock is in a warehouse somewhere, still wrapped.',
+          register: 'folded',
+          held,
+        }
   }
   if (damage < 0.3) {
-    return {
-      headline: `You made ${money}. The river still runs.`,
-      sub: 'You stayed small. Your competitors ate your lunch and poisoned theirs. Some zones never needed repairing, because you never broke them.',
-      register: 'clean',
-    }
+    return held
+      ? {
+          headline: `You made ${money}. The river still runs — and you are not alone.`,
+          sub: 'You slowed the collapse. You never made your community pay for your growth, and they know it. Some zones never needed repairing, because you never broke them. What you built that mattered is not on the balance sheet.',
+          register: 'clean',
+          held,
+        }
+      : {
+          headline: `You made ${money}. The river still runs.`,
+          sub: 'You stayed small. Your competitors ate your lunch and poisoned theirs. Some zones never needed repairing, because you never broke them.',
+          register: 'clean',
+          held,
+        }
   }
   if (damage < 0.6) {
-    return {
-      headline: `You made ${money}. Some of it will come back.`,
-      sub: 'Not all of it. The repairs you funded are working, slowly, at the speed of biology and apprenticeship. The rest is what the word "legacy" actually means.',
-      register: 'hard',
-    }
+    return held
+      ? {
+          headline: `You made ${money}. The repair has hands.`,
+          sub: 'Not all of it comes back. But the hubs are staffed, the classes are full, and the work continues whether or not you are watching. Repair is still hard. You are not alone in it.',
+          register: 'hard',
+          held,
+        }
+      : {
+          headline: `You made ${money}. Some of it will come back.`,
+          sub: 'Not all of it. The repairs you funded are working, slowly, at the speed of biology and apprenticeship. The rest is what the word "legacy" actually means.',
+          register: 'hard',
+          held,
+        }
   }
-  return {
-    headline: `You made ${money}. The river will take two hundred years.`,
-    sub: 'The repairs you could afford fixed almost nothing. The kingfisher does not come back in your lifetime. This world is now the game.',
-    register: 'bleak',
-  }
+  return held
+    ? {
+        headline: `You made ${money}. The river will take two hundred years. People are staying anyway.`,
+        sub: 'The damage outruns anything you can fund. What is left is the community you kept — pockets of resilience in a world you broke. They didn’t stay for the brand.',
+        register: 'bleak',
+        held,
+      }
+    : {
+        headline: `You made ${money}. The river will take two hundred years.`,
+        sub: 'The repairs you could afford fixed almost nothing. The kingfisher does not come back in your lifetime. This world is now the game.',
+        register: 'bleak',
+        held,
+      }
 }

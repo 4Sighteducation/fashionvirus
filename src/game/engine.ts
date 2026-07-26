@@ -1,11 +1,16 @@
 import { CARDS, FUSE_LABELS, cardById } from './cards'
-import { WHISPERS, damageScore, repairById } from './act2'
+import { ALLIES, WHISPERS, damageScore, repairById, repairCost } from './act2'
 import type { Card, Choice, GameState, Ledger } from './types'
 
-export const ACT1_TURNS = 12
-export const ACT2_TURNS = 3
+export const ACT1_TURNS = 16
+export const ACT2_TURNS = 5
 const BASE_NOVELTY_DECAY = 7
 const STARTING_CASH = 20
+const STARTING_SOCIAL = 5
+/** Community keeps buying when the feed moves on. */
+const SOCIAL_BUFFER_AT = 50
+/** People who know your work speak up — absorbs one crisis. */
+const CRISIS_SHIELD_AT = 60
 
 const emptyLedger = (): Ledger => ({
   water: 0,
@@ -25,9 +30,9 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function stageForTurn(turn: number): 1 | 2 | 3 {
-  if (turn <= 4) return 1
-  if (turn <= 8) return 2
+export function stageForTurn(turn: number): 1 | 2 | 3 {
+  if (turn <= 5) return 1
+  if (turn <= 11) return 2
   return 3
 }
 
@@ -49,6 +54,10 @@ export function newGame(): GameState {
     cash: STARTING_CASH,
     heat: 10,
     novelty: 50,
+    social: STARTING_SOCIAL,
+    allies: [],
+    allyToast: null,
+    crisisShieldUsed: false,
     noveltyDecay: BASE_NOVELTY_DECAY,
     ledger: emptyLedger(),
     fuses: [],
@@ -121,6 +130,18 @@ function applySurface(state: GameState, choice: Choice): void {
   state.cash += choice.surface.cash ?? 0
   state.heat = Math.min(100, Math.max(0, state.heat + (choice.surface.heat ?? 0)))
   state.novelty = Math.min(100, Math.max(0, state.novelty + (choice.surface.novelty ?? 0)))
+  state.social = Math.min(100, Math.max(0, state.social + (choice.surface.social ?? 0)))
+}
+
+/** Allies join at social milestones. One toast at a time; the rest queue naturally. */
+function checkAllies(state: GameState): void {
+  for (const ally of ALLIES) {
+    if (state.social >= ally.threshold && !state.allies.includes(ally.id)) {
+      state.allies.push(ally.id)
+      state.allyToast = ally.joinLine
+      return
+    }
+  }
 }
 
 /** Advance the market clock one tick: recurring effects, then novelty decay. */
@@ -133,9 +154,11 @@ function tick(state: GameState): void {
   state.recurring = state.recurring.filter((r) => r.turns === undefined || r.turns > 0)
   state.novelty = Math.max(0, state.novelty - state.noveltyDecay)
   if (state.novelty <= 0) {
-    // Unsold stock, unpaid invoices. The trap has teeth.
-    state.cash -= 8
-    state.heat = Math.max(0, state.heat - 4)
+    // Unsold stock, unpaid invoices. The trap has teeth —
+    // unless a community keeps buying when the feed moves on.
+    const buffered = state.social >= SOCIAL_BUFFER_AT
+    state.cash -= buffered ? 4 : 8
+    state.heat = Math.max(0, state.heat - (buffered ? 2 : 4))
   }
 }
 
@@ -172,8 +195,10 @@ export function reduce(prev: GameState, action: Action): GameState {
     case 'choose': {
       if (!state.currentCardId) return prev
       const card = cardById(state.currentCardId)
-      const choice = card.choices.find((c) => c.id === action.choiceId)
-      if (!choice) return prev
+      const baseChoice = card.choices.find((c) => c.id === action.choiceId)
+      if (!baseChoice) return prev
+      let choice = baseChoice
+      state.allyToast = null
 
       // ── special kinds ──
       if (choice.kind === 'inspect') {
@@ -184,6 +209,21 @@ export function reduce(prev: GameState, action: Action): GameState {
         tick(state)
         state.reaction = null
         return state
+      }
+
+      // Crisis shield: once per run, high social capital halves the hit.
+      let shieldFired = false
+      if (card.crisis && state.social >= CRISIS_SHIELD_AT && !state.crisisShieldUsed) {
+        state.crisisShieldUsed = true
+        shieldFired = true
+        choice = {
+          ...choice,
+          surface: {
+            ...choice.surface,
+            cash: choice.surface.cash && choice.surface.cash < 0 ? Math.round(choice.surface.cash / 2) : choice.surface.cash,
+            heat: choice.surface.heat && choice.surface.heat < 0 ? Math.round(choice.surface.heat / 2) : choice.surface.heat,
+          },
+        }
       }
 
       applySurface(state, choice)
@@ -203,7 +243,13 @@ export function reduce(prev: GameState, action: Action): GameState {
         }
       }
       state.reaction = choice.reaction ?? null
+      if (shieldFired) {
+        state.reaction = [choice.reaction, 'People who know your work speak up. It matters.']
+          .filter(Boolean)
+          .join(' ')
+      }
       if (choice.whisper) state.whisper = choice.whisper
+      checkAllies(state)
 
       if (choice.kind === 'audit') {
         // The real audit: the hidden machinery, itemised.
@@ -269,9 +315,11 @@ export function reduce(prev: GameState, action: Action): GameState {
 
     case 'repair': {
       const repair = repairById(action.repairId)
+      if (repair.requiresSocial && state.social < repair.requiresSocial) return prev
       const damage = damageScore(state.ledger)
-      // Repair costs scale with how broken the world is.
-      const cost = Math.round(repair.cost * (1 + damage))
+      // Costs scale with how broken the world is — and shrink with the
+      // people who show up to help.
+      const cost = repairCost(repair, damage, state.social, state.act2.repairsChosen)
       if (cost > state.act2.budget) return prev
       state.act2.budget -= cost
       state.act2.repairsChosen.push(repair.id)

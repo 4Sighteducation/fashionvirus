@@ -30,6 +30,8 @@ export interface SurfaceEffects {
   heat?: number
   /** 0–100, decays every turn — the novelty trap */
   novelty?: number
+  /** 0–100 — social capital. Slow, stable, and the thing money can't buy back. */
+  social?: number
 }
 
 export interface Choice {
@@ -93,6 +95,20 @@ export interface Repair {
   heals: Partial<Ledger>
   /** The leading indicator the player is shown. */
   indicator: string
+  /** Only offered when social capital reached this level in Act 1. */
+  requiresSocial?: number
+}
+
+/** A named ally, earned at a social-capital milestone. They carry into Act 2. */
+export interface Ally {
+  id: string
+  name: string
+  /** Social capital level at which they join. */
+  threshold: number
+  /** Shown as a quiet toast when they join in Act 1. */
+  joinLine: string
+  /** One vignette line per Act 2 year. */
+  act2Line: string
 }
 
 export type Phase = 'start' | 'act1' | 'hinge' | 'act2' | 'end'
@@ -107,10 +123,18 @@ export interface Act2State {
 export interface GameState {
   phase: Phase
   runId: string
-  turn: number // 1..12
+  turn: number // 1..16
   cash: number // £k
   heat: number // 0..100
   novelty: number // 0..100
+  /** 0..100 — trust, belonging, ambassadors. Slow to earn, slow to lose. */
+  social: number
+  /** Named allies earned at social milestones. */
+  allies: string[]
+  /** One-shot vignette shown when an ally joins. */
+  allyToast: string | null
+  /** High social absorbs one crisis — used once per run. */
+  crisisShieldUsed: boolean
   noveltyDecay: number // per-turn decay; the covenant raises it
   ledger: Ledger
   /** Planted tags — duplicates allowed, duplicates are severity. */

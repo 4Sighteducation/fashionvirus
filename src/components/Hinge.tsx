@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { damageScore } from '../game/act2'
+import { damageScore, dominantDamage } from '../game/act2'
 import { money, ledgerUnits, LEDGER_LABELS } from '../game/format'
 import type { GameState } from '../game/types'
 
@@ -34,16 +34,16 @@ export function Hinge({ state, onEnterAct2 }: Props) {
     )
   }
 
+  // The world you walk into matches the damage you led with.
+  const dominant = dominantDamage(state.ledger)
+  const video =
+    dominant === 'labour'
+      ? '/assets/hinge/a7-company-town-hinge.mp4'
+      : '/assets/hinge/a4-bale-port-hinge.mp4'
+
   return (
     <main className="reveal">
-      <video
-        className="reveal-video"
-        src="/assets/hinge/a4-bale-port-hinge.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-      />
+      <video className="reveal-video" src={video} autoPlay muted loop playsInline />
       <div className="reveal-scrim" />
       <div className="reveal-content">
         <p className="reveal-intro">While you were on stage, the ledger balanced itself.</p>
@@ -63,9 +63,14 @@ export function Hinge({ state, onEnterAct2 }: Props) {
             ? 'You were careful. The world remembers that too.'
             : 'The world you built is waiting.'}
         </p>
+        {state.allies.length > 0 && (
+          <p className="reveal-social" style={{ animationDelay: `${1 + 6 * 0.9 + 1.4}s` }}>
+            The market never priced what you built. {state.allies.length === 1 ? 'One group of people' : `${['Two', 'Three', 'Four'][state.allies.length - 2] ?? state.allies.length} groups of people`} did. They are still here.
+          </p>
+        )}
         <button
           className="btn-ghost reveal-cta"
-          style={{ animationDelay: `${1 + 6 * 0.9 + 1.6}s` }}
+          style={{ animationDelay: `${1 + 6 * 0.9 + 2.2}s` }}
           type="button"
           onClick={onEnterAct2}
         >

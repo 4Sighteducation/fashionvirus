@@ -1,4 +1,4 @@
-import { WORLD_STATES, damageScore, ending } from '../game/act2'
+import { WORLD_STATES, allyById, damageScore, ending } from '../game/act2'
 import { ACT1_TURNS } from '../game/engine'
 import type { GameState } from '../game/types'
 
@@ -9,10 +9,10 @@ interface Props {
 
 export function EndScreen({ state, onRestart }: Props) {
   const damage = damageScore(state.ledger)
-  const end = ending(state.cash + state.act2.budget, damage, state.folded)
+  const end = ending(state.cash + state.act2.budget, damage, state.folded, state.social)
 
   return (
-    <main className={`endscreen end-${end.register}`}>
+    <main className={`endscreen end-${end.register} ${end.held ? 'end-held' : ''}`}>
       <h1 className="end-headline">{end.headline}</h1>
       <p className="end-sub">{end.sub}</p>
 
@@ -24,9 +24,17 @@ export function EndScreen({ state, onRestart }: Props) {
         </div>
       )}
 
+      {state.allies.length > 0 && (
+        <div className="end-allies">
+          <span className="eyebrow end-allies-label">Who stood with you</span>
+          <p>{state.allies.map((id) => allyById(id).name).join(' · ')}</p>
+        </div>
+      )}
+
       <div className="end-stats">
         <p>
-          You pressed <strong>LEARN MORE</strong> {state.learnMoreCount === 0 ? 'zero times' : `${state.learnMoreCount} time${state.learnMoreCount === 1 ? '' : 's'}`} in{' '}
+          You pressed <strong>LEARN MORE</strong>{' '}
+          {state.learnMoreCount === 0 ? 'zero times' : `${state.learnMoreCount} time${state.learnMoreCount === 1 ? '' : 's'}`} in{' '}
           {ACT1_TURNS} seasons.
         </p>
         {state.learnMoreCount === 0 && <p className="end-notlooked">You can’t say you didn’t know. Only that you didn’t look.</p>}
@@ -35,6 +43,9 @@ export function EndScreen({ state, onRestart }: Props) {
             {state.act2.repairsChosen.length} repair{state.act2.repairsChosen.length === 1 ? '' : 's'} funded. They
             outlast you. That was the point.
           </p>
+        )}
+        {state.allies.length === 0 && state.social < 25 && (
+          <p className="end-notlooked">Nobody stood with you at the end. That was also a choice — made slowly, in small pieces.</p>
         )}
       </div>
 

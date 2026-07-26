@@ -30,7 +30,7 @@ export const CARDS: Card[] = [
       {
         id: 'low_impact',
         label: 'The low-impact dye',
-        surface: { heat: 3, cash: -2 },
+        surface: { heat: 3, cash: -2, social: 2 },
         hidden: { water: 0.4 },
       },
     ],
@@ -54,7 +54,7 @@ export const CARDS: Card[] = [
       {
         id: 'veg_tanned',
         label: 'Vegetable-tanned, traceable',
-        surface: { cash: -7, heat: 6 },
+        surface: { cash: -7, heat: 6, social: 3 },
         hidden: { carbon: 20 },
       },
       {
@@ -83,13 +83,13 @@ export const CARDS: Card[] = [
       {
         id: 'recycled',
         label: 'Recycled polyester',
-        surface: { cash: 2, heat: 4 },
+        surface: { cash: 2, heat: 4, social: 2 },
         hidden: { microplastics: 500 },
       },
       {
         id: 'organic_cotton',
         label: 'Organic cotton',
-        surface: { cash: -3, heat: 8 },
+        surface: { cash: -3, heat: 8, social: 2 },
         hidden: { water: 2.6, land: 15 },
       },
     ],
@@ -113,7 +113,7 @@ export const CARDS: Card[] = [
       {
         id: 'lyocell',
         label: 'Certified closed-loop lyocell instead',
-        surface: { cash: -3, heat: 4 },
+        surface: { cash: -3, heat: 4, social: 2 },
       },
     ],
   },
@@ -128,7 +128,7 @@ export const CARDS: Card[] = [
       {
         id: 'sandblast',
         label: 'Sandblast',
-        surface: { cash: 12, heat: 9 },
+        surface: { cash: 12, heat: 9, social: -2 },
         hidden: { labour: 40 },
         fuses: ['worker_grievance', 'sandblast'],
         whisper: "A finishing-house invoice includes a line for 'respiratory PPE'. It is very small.",
@@ -136,7 +136,7 @@ export const CARDS: Card[] = [
       {
         id: 'laser',
         label: 'Invest in laser finishing',
-        surface: { cash: -24 },
+        surface: { cash: -24, social: 3 },
       },
     ],
   },
@@ -158,7 +158,7 @@ export const CARDS: Card[] = [
       {
         id: 'lambswool',
         label: 'Switch to brushed lambswool, keep the silhouette',
-        surface: { cash: 3 },
+        surface: { cash: 3, social: 2 },
       },
     ],
   },
@@ -174,7 +174,7 @@ export const CARDS: Card[] = [
       {
         id: 'build_on_deadstock',
         label: 'Build a collection on deadstock',
-        surface: { heat: 8, cash: 5, novelty: 10 },
+        surface: { heat: 8, cash: 5, novelty: 10, social: 3 },
       },
       {
         id: 'pass',
@@ -197,7 +197,7 @@ export const CARDS: Card[] = [
       {
         id: 'sign',
         label: 'Sign',
-        surface: { cash: 22, heat: 8 },
+        surface: { cash: 22, heat: 8, social: -3 },
         hidden: { labour: 180, carbon: 140 },
         fuses: ['supply_chain_opacity'],
         whisper: 'Your agent is slow to answer which factory made the last run.',
@@ -211,7 +211,7 @@ export const CARDS: Card[] = [
       {
         id: 'stay_local',
         label: 'Stay local, small-batch',
-        surface: { cash: -1, heat: 5 },
+        surface: { cash: -1, heat: 5, social: 5 },
         hidden: { carbon: 15 },
       },
     ],
@@ -228,7 +228,7 @@ export const CARDS: Card[] = [
       {
         id: 'piecework',
         label: 'Switch to piecework',
-        surface: { cash: 11 },
+        surface: { cash: 11, social: -4 },
         hidden: { labour: 60 },
         fuses: ['worker_grievance'],
         whisper: 'Li Pengjian asks whether you might meet the workers to discuss the pay structure.',
@@ -237,13 +237,13 @@ export const CARDS: Card[] = [
         id: 'tea',
         // The World Factory card: the decent thing pays more.
         label: 'Meet the workers; offer them tea',
-        surface: { cash: 13, heat: 3 },
+        surface: { cash: 13, heat: 3, social: 5 },
         reaction: 'Yan Rong shows you a seam technique you have never seen. You keep the pay structure and gain a design.',
       },
       {
         id: 'raise_pay',
         label: 'Simply raise pay a little',
-        surface: { cash: 3 },
+        surface: { cash: 3, social: 3 },
       },
     ],
   },
@@ -258,7 +258,7 @@ export const CARDS: Card[] = [
       {
         id: 'overtime',
         label: 'Take the overtime',
-        surface: { cash: 16, heat: 8 },
+        surface: { cash: 16, heat: 8, social: -2 },
         hidden: { labour: 90 },
         fuses: ['worker_grievance'],
       },
@@ -270,7 +270,7 @@ export const CARDS: Card[] = [
       {
         id: 'refuse',
         label: 'Refuse; lose the account',
-        surface: { cash: -12, heat: -10 },
+        surface: { cash: -12, heat: -10, social: 2 },
       },
     ],
   },
@@ -291,7 +291,7 @@ export const CARDS: Card[] = [
       {
         id: 'sea',
         label: 'Move the campaign, ship by sea',
-        surface: { heat: -6, novelty: -12 },
+        surface: { heat: -6, novelty: -12, social: 1 },
         hidden: { carbon: 18 },
       },
     ],
@@ -307,7 +307,7 @@ export const CARDS: Card[] = [
       {
         id: 'paperwork',
         label: 'Arrange the paperwork',
-        surface: { cash: -4 },
+        surface: { cash: -4, social: -2 },
         fuses: ['supply_chain_opacity'],
         reaction: 'The deal proceeds. The document is beautiful.',
       },
@@ -315,7 +315,7 @@ export const CARDS: Card[] = [
         id: 'real_audit',
         // Reveals all currently planted fuses to the player.
         label: 'Commission the real audit',
-        surface: { cash: -20 },
+        surface: { cash: -20, social: 5 },
         kind: 'audit',
       },
     ],
@@ -331,14 +331,14 @@ export const CARDS: Card[] = [
       {
         id: 'forward',
         label: 'Forward to the agent; move on',
-        surface: {},
+        surface: { social: -5 },
         fuses: ['worker_grievance', 'worker_grievance'],
         whisper: 'You never hear back about the email.',
       },
       {
         id: 'halt',
         label: 'Halt production; audit the site',
-        surface: { cash: -90, novelty: -20 },
+        surface: { cash: -90, novelty: -20, social: 6 },
       },
     ],
   },
@@ -362,12 +362,12 @@ export const CARDS: Card[] = [
       {
         id: 'hold',
         label: 'Hold: two collections a year',
-        surface: { novelty: -10, cash: -4, heat: -6 },
+        surface: { novelty: -10, cash: -4, heat: -6, social: 2 },
       },
       {
         id: 'repair_resale',
         label: 'Launch repair & resale instead',
-        surface: { novelty: 12, cash: -6, heat: 7 },
+        surface: { novelty: 12, cash: -6, heat: 7, social: 6 },
       },
     ],
   },
@@ -388,7 +388,7 @@ export const CARDS: Card[] = [
       {
         id: 'decline_collab',
         label: 'Decline; protect the main line',
-        surface: { heat: -4 },
+        surface: { heat: -4, social: 1 },
       },
     ],
   },
@@ -403,13 +403,13 @@ export const CARDS: Card[] = [
       {
         id: 'cut_range',
         label: 'Cut the range',
-        surface: { cash: 9 },
+        surface: { cash: 9, social: -5 },
         fuses: ['greenwashing_claim'],
       },
       {
         id: 'keep_range',
         label: 'Keep full range; eat the margin',
-        surface: { cash: -5, heat: 5 },
+        surface: { cash: -5, heat: 5, social: 5 },
       },
     ],
   },
@@ -430,7 +430,7 @@ export const CARDS: Card[] = [
       {
         id: 'digital',
         label: 'Digital presentation instead',
-        surface: { heat: 8, cash: -15 },
+        surface: { heat: 8, cash: -15, social: 1 },
         hidden: { carbon: 4 },
       },
     ],
@@ -457,7 +457,7 @@ export const CARDS: Card[] = [
       {
         id: 'decline_fund',
         label: 'Decline; grow on revenue',
-        surface: { heat: -4 },
+        surface: { heat: -4, social: 2 },
       },
     ],
   },
@@ -472,14 +472,14 @@ export const CARDS: Card[] = [
       {
         id: 'promise_40',
         label: 'Promise 40%',
-        surface: { cash: 80, novelty: 25, heat: 10 },
+        surface: { cash: 80, novelty: 25, heat: 10, social: -2 },
         hidden: { labour: 120, carbon: 200 },
         fuses: ['worker_grievance'],
       },
       {
         id: 'truth_12',
         label: 'Offer the truth: 12%, sustainably',
-        surface: { cash: -40, heat: -6 },
+        surface: { cash: -40, heat: -6, social: 4 },
       },
     ],
   },
@@ -503,7 +503,7 @@ export const CARDS: Card[] = [
       {
         id: 'renew_flat',
         label: 'Renew flat; keep flexibility',
-        surface: { cash: 20 },
+        surface: { cash: 20, social: 1 },
       },
     ],
   },
@@ -518,13 +518,13 @@ export const CARDS: Card[] = [
       {
         id: 'change_nothing',
         label: 'Take it and change nothing',
-        surface: { cash: 150, heat: 4 },
+        surface: { cash: 150, heat: 4, social: -2 },
         fuses: ['greenwashing_claim'],
       },
       {
         id: 'raise_the_bar',
         label: 'Take it and actually raise the bar',
-        surface: { cash: 60, heat: 2 },
+        surface: { cash: 60, heat: 2, social: 4 },
         hidden: { carbon: -80, microplastics: -200 },
       },
       {
@@ -547,7 +547,7 @@ export const CARDS: Card[] = [
       {
         id: 'launch_it',
         label: 'Launch it',
-        surface: { heat: 20, cash: -11 },
+        surface: { heat: 20, cash: -11, social: -3 },
         hidden: { waste: 2 },
         fuses: ['greenwashing_claim'],
         whisper: 'A sustainability blogger posts a thread. It has 200 views.',
@@ -555,7 +555,7 @@ export const CARDS: Card[] = [
       {
         id: 'reformulate',
         label: 'Actually reformulate the main line',
-        surface: { heat: 2, cash: -100 },
+        surface: { heat: 2, cash: -100, social: 5 },
         hidden: { microplastics: -400, carbon: -80 },
       },
       {
@@ -583,7 +583,7 @@ export const CARDS: Card[] = [
       {
         id: 'seed_narrow',
         label: "Seed narrowly, to people who'll wear it",
-        surface: { heat: 7, novelty: 2, cash: -3 },
+        surface: { heat: 7, novelty: 2, cash: -3, social: 3 },
         hidden: { carbon: 2 },
       },
     ],
@@ -599,14 +599,14 @@ export const CARDS: Card[] = [
       {
         id: 'send_letter',
         label: 'Send the letter',
-        surface: { heat: 2 },
+        surface: { heat: 2, social: -6 },
         fuses: ['supply_chain_opacity', 'supply_chain_opacity'],
         whisper: 'The article quietly disappears. Its author does not.',
       },
       {
         id: 'respond_honestly',
         label: 'Respond publicly, honestly',
-        surface: { heat: -4 },
+        surface: { heat: -4, social: 6 },
         clearsFuses: ['supply_chain_opacity'],
         reaction: 'It costs you a news cycle. It buys you a witness.',
       },
@@ -628,13 +628,13 @@ export const CARDS: Card[] = [
       {
         id: 'go_generated',
         label: 'Go generated',
-        surface: { cash: 14, heat: 4 },
+        surface: { cash: 14, heat: 4, social: -4 },
         fuses: ['worker_grievance'],
       },
       {
         id: 'keep_human',
         label: 'Keep human shoots',
-        surface: { cash: -10, heat: 1 },
+        surface: { cash: -10, heat: 1, social: 4 },
       },
     ],
   },
@@ -650,13 +650,13 @@ export const CARDS: Card[] = [
       {
         id: 'grant_access',
         label: 'Grant access',
-        surface: {},
+        surface: { social: 6 },
         kind: 'documentary_grant',
       },
       {
         id: 'decline_access',
         label: 'Decline',
-        surface: { heat: -2 },
+        surface: { heat: -2, social: -2 },
         kind: 'documentary_decline',
       },
     ],
@@ -675,7 +675,7 @@ export const CARDS: Card[] = [
       {
         id: 'dispose',
         label: 'Dispose quietly',
-        surface: { cash: -2 },
+        surface: { cash: -2, social: -2 },
         hidden: { waste: 30, carbon: 120 },
         fuses: ['greenwashing_claim'],
         whisper: "An invoice arrives from a contractor whose name you don't recognise.",
@@ -688,7 +688,7 @@ export const CARDS: Card[] = [
       {
         id: 'take_back',
         label: 'Take-back & recycle programme',
-        surface: { cash: -14, heat: 9 },
+        surface: { cash: -14, heat: 9, social: 6 },
         hidden: { waste: 4 },
       },
     ],
@@ -712,7 +712,7 @@ export const CARDS: Card[] = [
       {
         id: 'paid_returns',
         label: 'Paid returns, better sizing tools',
-        surface: { cash: -1, heat: -3 },
+        surface: { cash: -1, heat: -3, social: 2 },
         hidden: { waste: 2 },
       },
     ],
@@ -728,7 +728,7 @@ export const CARDS: Card[] = [
       {
         id: 'sign_contract',
         label: 'Sign the contract',
-        surface: {},
+        surface: { social: -3 },
         recurring: { cash: 11, hidden: { waste: 30 } },
         fuses: ['greenwashing_claim', 'greenwashing_claim'],
         whisper: "A geography teacher tags you in a photo of a beach. You don't open it.",
@@ -737,7 +737,7 @@ export const CARDS: Card[] = [
       {
         id: 'sorting_op',
         label: 'Decline; fund a sorting & resale operation',
-        surface: { cash: -32 },
+        surface: { cash: -32, social: 6 },
         hidden: { waste: 5 },
       },
     ],
@@ -754,7 +754,7 @@ export const CARDS: Card[] = [
       {
         id: 'launch_rental',
         label: 'Launch rental',
-        surface: { cash: -50, novelty: 8 },
+        surface: { cash: -50, novelty: 8, social: 6 },
         recurring: { cash: 8, hidden: { carbon: -20 } },
         reaction: 'Month two: the same coat, its third renter, still perfect.',
       },
@@ -781,7 +781,7 @@ export const CARDS: Card[] = [
       {
         id: 'cut_off',
         label: 'Cut them off immediately',
-        surface: { cash: -8, heat: 2 },
+        surface: { cash: -8, heat: 2, social: -4 },
         hidden: { water: -0.3 },
         worldStates: ['mill_town_dies'],
         reaction: 'The river begins to recover within the year. The town does not.',
@@ -789,7 +789,7 @@ export const CARDS: Card[] = [
       {
         id: 'fund_remediation',
         label: 'Stay and fund remediation over two years',
-        surface: { cash: -45 },
+        surface: { cash: -45, social: 6 },
         recurring: { cash: -4, turns: 6 },
         fuses: ['toxic_discharge'],
         reaction: 'You commit publicly. Your name is on the mill gate now, for better or worse.',
@@ -797,7 +797,7 @@ export const CARDS: Card[] = [
       {
         id: 'taper_quietly',
         label: 'Quietly taper orders and say nothing',
-        surface: {},
+        surface: { social: -3 },
         fuses: ['supply_chain_opacity'],
         whisper: "The mill's Christmas shutdown starts in October this year.",
       },
@@ -815,7 +815,7 @@ export const CARDS: Card[] = [
       {
         id: 'organic',
         label: 'Organic cotton',
-        surface: { heat: 6, cash: -5 },
+        surface: { heat: 6, cash: -5, social: 1 },
         hidden: { water: 2.6, land: 15 },
       },
       {
@@ -845,21 +845,21 @@ export const CARDS: Card[] = [
       {
         id: 'impose_cap',
         label: 'Impose the cap anyway',
-        surface: { cash: -6 },
+        surface: { cash: -6, social: -3 },
         hidden: { labour: -20 },
         reaction: "The cap holds. The remittances don't.",
       },
       {
         id: 'safeguards',
         label: 'Keep overtime, add safeguards',
-        surface: { cash: -2 },
+        surface: { cash: -2, social: 2 },
         hidden: { labour: 30 },
         fuses: ['worker_grievance'],
       },
       {
         id: 'raise_base',
         label: "Raise base pay so overtime isn't needed",
-        surface: { cash: -22 },
+        surface: { cash: -22, social: 4 },
         recurring: { cash: -5 },
         decayDelta: 2,
         reaction: 'Unit economics now depend on selling more. The trap, seen from the other side.',
@@ -878,7 +878,7 @@ export const CARDS: Card[] = [
       {
         id: 'take_it',
         label: 'Take it',
-        surface: { cash: 400 },
+        surface: { cash: 400, social: 1 },
         recurring: { hidden: { waste: -4 } },
         fuses: ['greenwashing_claim'],
         reaction: 'Circular rails appear in 900 stores. Your name is nowhere on them.',
@@ -918,7 +918,7 @@ export const CARDS: Card[] = [
       {
         id: 'payroll_first',
         label: 'Move her family onto your payroll first, then act',
-        surface: { cash: -15 },
+        surface: { cash: -15, social: 4 },
         fuses: ['worker_grievance'],
         reaction: 'Two months of risk, then she is out, and the audit lands.',
       },
@@ -936,7 +936,7 @@ export const CARDS: Card[] = [
       {
         id: 'license_it',
         label: 'License it',
-        surface: { heat: 8 },
+        surface: { heat: 8, social: 4 },
         recurring: { cash: 30, hidden: { carbon: 50, microplastics: 80 } },
         reaction: '400,000 people can now afford a garment built to last.',
       },
@@ -961,21 +961,21 @@ export const CARDS: Card[] = [
       {
         id: 'full_recall',
         label: 'Full public recall',
-        surface: { cash: -120, heat: -15 },
+        surface: { cash: -120, heat: -15, social: 6 },
         hidden: { carbon: 180, waste: 45 },
         reaction: 'The letters go out under your signature. Honest, and enormous.',
       },
       {
         id: 'say_nothing',
         label: 'Quietly fix the process, say nothing',
-        surface: {},
+        surface: { social: -2 },
         fuses: ['greenwashing_claim'],
         whisper: 'The lab tech who ran the batch orders nothing from your site again.',
       },
       {
         id: 'voluntary_returns',
         label: 'Offer voluntary returns without stating why',
-        surface: { cash: -30, heat: -4 },
+        surface: { cash: -30, heat: -4, social: 1 },
         hidden: { waste: 10 },
       },
     ],
@@ -995,21 +995,21 @@ export const CARDS: Card[] = [
       {
         id: 'deny',
         label: 'Deny everything — lawyer up',
-        surface: { cash: -25, heat: -10 },
+        surface: { cash: -25, heat: -10, social: -6 },
         fuses: ['greenwashing_claim'],
         reaction: 'The story runs anyway. Your denial is the headline.',
       },
       {
         id: 'pr',
         label: 'Crisis PR — pledge an inquiry',
-        surface: { cash: -40, heat: -4 },
+        surface: { cash: -40, heat: -4, social: -2 },
         fuses: ['greenwashing_claim'],
         reaction: 'The inquiry is announced. Its findings are due after the news cycle ends.',
       },
       {
         id: 'confess',
         label: 'Answer her questions honestly',
-        surface: { heat: -15, novelty: -10 },
+        surface: { heat: -15, novelty: -10, social: 6 },
         clearsFuses: ['supply_chain_opacity'],
         reaction: 'The piece is devastating and fair. Three suppliers cut you off. One customer writes: thank you.',
       },
@@ -1027,20 +1027,20 @@ export const CARDS: Card[] = [
       {
         id: 'distance',
         label: '"We are reviewing our suppliers"',
-        surface: { cash: -8, heat: -5 },
+        surface: { cash: -8, heat: -5, social: -2 },
         fuses: ['greenwashing_claim'],
       },
       {
         id: 'switch_quietly',
         label: 'Switch dye houses quietly',
-        surface: { cash: -12 },
+        surface: { cash: -12, social: -2 },
         hidden: { water: 0.5 },
         reaction: 'The new dye house is two rivers east.',
       },
       {
         id: 'fund_cleanup',
         label: 'Own it — fund the cleanup',
-        surface: { cash: -30, heat: 2 },
+        surface: { cash: -30, heat: 2, social: 6 },
         clearsFuses: ['toxic_discharge'],
       },
     ],
@@ -1057,20 +1057,20 @@ export const CARDS: Card[] = [
       {
         id: 'relocate',
         label: 'Cut ties, relocate production',
-        surface: { cash: -30, heat: -8 },
+        surface: { cash: -30, heat: -8, social: -4 },
         fuses: ['supply_chain_opacity'],
         reaction: 'The order book barely notices. The eleven do.',
       },
       {
         id: 'compensate',
         label: 'Compensate the injured, fix the building',
-        surface: { cash: -60, heat: -3 },
+        surface: { cash: -60, heat: -3, social: 7 },
         clearsFuses: ['worker_grievance'],
       },
       {
         id: 'statement',
         label: '"Our thoughts are with those affected"',
-        surface: { cash: -5, heat: -12 },
+        surface: { cash: -5, heat: -12, social: -5 },
         fuses: ['greenwashing_claim'],
       },
     ],
@@ -1087,19 +1087,19 @@ export const CARDS: Card[] = [
       {
         id: 'ride_it',
         label: 'Ride it out — say nothing',
-        surface: { novelty: -20, heat: -12 },
+        surface: { novelty: -20, heat: -12, social: -4 },
       },
       {
         id: 'rebrand',
         label: 'Rebrand — new name, new story',
-        surface: { cash: -45, novelty: -6 },
+        surface: { cash: -45, novelty: -6, social: -5 },
         fuses: ['greenwashing_claim'],
         reaction: 'The internet finds the paperwork in nine days.',
       },
       {
         id: 'reform',
         label: 'Publish everything, set real targets',
-        surface: { cash: -35, heat: 4, novelty: -8 },
+        surface: { cash: -35, heat: 4, novelty: -8, social: 7 },
         clearsFuses: ['greenwashing_claim', 'greenwashing_claim'],
       },
     ],
@@ -1116,14 +1116,14 @@ export const CARDS: Card[] = [
       {
         id: 'buyout',
         label: 'Buy the stake back',
-        surface: { cash: -80 },
+        surface: { cash: -80, social: 2 },
         clearsFuses: ['undisclosed_animal_research'],
         reaction: 'The fund makes 60% in eighteen months. The story dies.',
       },
       {
         id: 'shrug',
         label: '"Investors do not set our values"',
-        surface: { heat: -10 },
+        surface: { heat: -10, social: -4 },
         fuses: ['greenwashing_claim'],
       },
     ],
@@ -1140,13 +1140,13 @@ export const CARDS: Card[] = [
       {
         id: 'settle_nda',
         label: 'Settle quietly, NDAs all round',
-        surface: { cash: -45 },
+        surface: { cash: -45, social: -4 },
         fuses: ['greenwashing_claim'],
       },
       {
         id: 'liability',
         label: 'Accept liability, fund treatment, ban the process',
-        surface: { cash: -65, heat: 3 },
+        surface: { cash: -65, heat: 3, social: 7 },
         clearsFuses: ['worker_grievance'],
       },
     ],
@@ -1157,6 +1157,29 @@ export const cardById = (id: string): Card => {
   const card = CARDS.find((c) => c.id === id)
   if (!card) throw new Error(`Unknown card: ${id}`)
   return card
+}
+
+// ─── Card art — files live in public/assets/cards/<id>.<ext>. ───
+// Missing art gets the styled fallback in CardModal; crisis cards get
+// the newsprint treatment and never use photography.
+
+const ART_JPEG = new Set([
+  'ai_models', 'air_freight', 'deadstock_find', 'documentary_request', 'dye_signature_colour',
+  'export_offer', 'factory_fire_warning', 'fashion_week', 'green_bond', 'greenwash_campaign',
+  'growth_pressure', 'hedge_fund_offer', 'influencer_seeding', 'novelty_pressure', 'offshore_decision',
+  'piecework_pay', 'polyester_blend', 'rental_pivot', 'returns_policy', 'sandblasted_denim',
+  'size_run_gamble', 'the_audit', 'the_bank_covenant', 'the_collab', 'the_deadline',
+  'the_takedown', 'unsold_stock', 'viscose_forest',
+])
+const ART_PNG = new Set([
+  'angora_moment', 'd_access_or_purity', 'd_mill_town', 'd_no_clean_fabric',
+  'd_overtime_petition', 'd_the_recall', 'leather_sourcing',
+])
+
+export function cardArt(id: string): string | null {
+  if (ART_JPEG.has(id)) return `/assets/cards/${id}.jpeg`
+  if (ART_PNG.has(id)) return `/assets/cards/${id}.png`
+  return null
 }
 
 /** Human-readable fuse names — used by the real audit and the reveal. */

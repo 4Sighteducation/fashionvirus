@@ -1,8 +1,10 @@
+import { useEffect, useRef, useState } from 'react'
 import { FUSE_LABELS, cardById } from '../game/cards'
 import { damageScore } from '../game/act2'
-import { ACT1_TURNS } from '../game/engine'
+import { ACT1_TURNS, stageForTurn } from '../game/engine'
 import { money, LEDGER_LABELS } from '../game/format'
 import type { GameState } from '../game/types'
+import { CardModal } from './CardModal'
 
 interface Props {
   state: GameState
@@ -11,22 +13,85 @@ interface Props {
   onChoose: (choiceId: string) => void
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  materials: 'DECISION · MATERIALS',
-  manufacturing: 'DECISION · MANUFACTURING',
-  volume: 'DECISION · VOLUME',
-  funding: 'DECISION · FUNDING',
-  marketing: 'DECISION · MARKETING',
-  endoflife: 'DECISION · END OF LIFE',
+const STAGE_LABELS: Record<1 | 2 | 3, string> = {
+  1: 'BEDROOM LABEL',
+  2: 'HIGH STREET',
+  3: 'GLOBAL',
 }
 
-function Meter({ label, value, max = 100 }: { label: string; value: number; max?: number }) {
+interface Snapshot {
+  turn: number
+  cash: number
+  heat: number
+  novelty: number
+  social: number
+}
+
+/** Per-season deltas for the stat tiles — what changed since your last decision. */
+function useDeltas(state: GameState) {
+  const last = useRef<Snapshot>({
+    turn: state.turn,
+    cash: state.cash,
+    heat: state.heat,
+    novelty: state.novelty,
+    social: state.social,
+  })
+  const [deltas, setDeltas] = useState({ cash: 0, heat: 0, novelty: 0, social: 0 })
+
+  useEffect(() => {
+    if (state.turn !== last.current.turn) {
+      setDeltas({
+        cash: state.cash - last.current.cash,
+        heat: state.heat - last.current.heat,
+        novelty: state.novelty - last.current.novelty,
+        social: state.social - last.current.social,
+      })
+      last.current = {
+        turn: state.turn,
+        cash: state.cash,
+        heat: state.heat,
+        novelty: state.novelty,
+        social: state.social,
+      }
+    }
+  }, [state.turn, state.cash, state.heat, state.novelty, state.social])
+
+  return deltas
+}
+
+function Delta({ value, format }: { value: number; format?: (n: number) => string }) {
+  if (!value) return null
+  const text = format ? format(value) : `${value > 0 ? '+' : '−'}${Math.abs(value)}`
+  return <span className={`stat-delta ${value > 0 ? 'delta-up' : 'delta-down'}`}>{text}</span>
+}
+
+function StatTile({
+  label,
+  value,
+  delta,
+  meter,
+  variant,
+  deltaFormat,
+}: {
+  label: string
+  value: string | number
+  delta: number
+  meter?: number
+  variant?: string
+  deltaFormat?: (n: number) => string
+}) {
   return (
-    <div className="meter">
-      <span className="eyebrow meter-label">{label}</span>
-      <div className="meter-track">
-        <div className="meter-fill" style={{ width: `${Math.max(0, Math.min(100, (value / max) * 100))}%` }} />
-      </div>
+    <div className={`tile ${variant ?? ''}`}>
+      <span className="eyebrow tile-label">{label}</span>
+      <span className="tile-value">
+        {value}
+        <Delta value={delta} format={deltaFormat} />
+      </span>
+      {meter !== undefined && (
+        <div className="tile-track">
+          <div className="tile-fill" style={{ width: `${Math.max(0, Math.min(100, meter))}%` }} />
+        </div>
+      )}
     </div>
   )
 }
@@ -34,7 +99,16 @@ function Meter({ label, value, max = 100 }: { label: string; value: number; max?
 export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
   const card = state.currentCardId ? cardById(state.currentCardId) : null
   const damage = damageScore(state.ledger)
-  const isCrisis = !!card?.crisis
+  const stage = stageForTurn(Math.min(state.turn, ACT1_TURNS))
+  const deltas = useDeltas(state)
+
+  // The between-seasons beat: consequences land on the dashboard first,
+  // then the player deals the next card themselves.
+  const [dealt, setDealt] = useState(false)
+  useEffect(() => {
+    if (!state.looked) setDealt(false)
+  }, [state.currentCardId, state.looked])
+  const isCrisisWaiting = !!card?.crisis
 
   // The interface is complicit: it degrades with the hidden ledger,
   // slowly enough that nobody consciously notices.
@@ -48,18 +122,44 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
 
       <header className="act1-top">
         <span className="act1-wordmark">FASHION VIRUS</span>
+        <span className="eyebrow act1-stage">{STAGE_LABELS[stage]}</span>
         <span className="eyebrow act1-season">
           Season {Math.min(state.turn, ACT1_TURNS)} / {ACT1_TURNS}
         </span>
       </header>
 
+      <div className="season-track" aria-hidden>
+        {Array.from({ length: ACT1_TURNS }, (_, i) => (
+          <span
+            key={i}
+            className={`season-dot ${i + 1 < state.turn ? 'dot-past' : ''} ${i + 1 === state.turn ? 'dot-now' : ''}`}
+          />
+        ))}
+      </div>
+
       <section className="act1-stats">
-        <div className="stat">
-          <span className="eyebrow meter-label">Cash</span>
-          <span className={`stat-value ${state.cash < 0 ? 'stat-negative' : ''}`}>{money(state.cash)}</span>
-        </div>
-        <Meter label="Heat" value={state.heat} />
-        <Meter label="Novelty" value={state.novelty} />
+        <StatTile
+          label="Cash"
+          value={money(state.cash)}
+          delta={deltas.cash}
+          variant={state.cash < 0 ? 'tile-negative' : ''}
+          deltaFormat={(n) => `${n > 0 ? '+' : '−'}£${Math.abs(n)}k`}
+        />
+        <StatTile label="Heat" value={Math.round(state.heat)} delta={deltas.heat} meter={state.heat} variant="tile-heat" />
+        <StatTile
+          label="Novelty"
+          value={Math.round(state.novelty)}
+          delta={deltas.novelty}
+          meter={state.novelty}
+          variant="tile-novelty"
+        />
+        <StatTile
+          label="Social capital"
+          value={Math.round(state.social)}
+          delta={deltas.social}
+          meter={state.social}
+          variant="tile-social"
+        />
       </section>
 
       {showLedger && (
@@ -89,37 +189,24 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
       )}
 
       {state.reaction && <p className="reaction">{state.reaction}</p>}
+      {state.allyToast && <p className="ally-toast">{state.allyToast}</p>}
 
-      {card && (
-        <article className={`card ${isCrisis ? 'card-crisis' : ''}`}>
-          <p className="eyebrow card-category">
-            {isCrisis ? '⚠ DEVELOPING' : CATEGORY_LABELS[card.category]}
-          </p>
-          <h2 className="card-title">{card.title}</h2>
-          {card.character && <p className="card-character">— {card.character}</p>}
-          <p className="card-body">{card.body}</p>
+      {card && !dealt && (
+        <button
+          type="button"
+          className={`btn-deal ${isCrisisWaiting ? 'btn-deal-crisis' : ''}`}
+          onClick={() => setDealt(true)}
+        >
+          {isCrisisWaiting
+            ? '⚠ Something is developing'
+            : state.turn === 1
+              ? 'Open your first decision'
+              : 'Open the next decision'}
+        </button>
+      )}
 
-          {state.looked && card.depth && (
-            <div className="card-depth">
-              <span className="eyebrow depth-label">What you found</span>
-              <p>{card.depth}</p>
-            </div>
-          )}
-
-          <div className="card-choices">
-            {card.choices.map((choice) => (
-              <button key={choice.id} type="button" className="btn-choice" onClick={() => onChoose(choice.id)}>
-                {choice.label}
-              </button>
-            ))}
-          </div>
-
-          {card.depth && !state.looked && (
-            <button type="button" className="btn-learn" onClick={onLearnMore}>
-              LEARN MORE — costs a turn
-            </button>
-          )}
-        </article>
+      {card && (dealt || state.looked) && (
+        <CardModal card={card} state={state} onLearnMore={onLearnMore} onChoose={onChoose} />
       )}
 
       {state.whisper && <p className="whisper">{state.whisper}</p>}

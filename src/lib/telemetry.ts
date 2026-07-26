@@ -10,6 +10,7 @@ export type TelemetryEvent =
   | 'crisis_fired'
   | 'hinge_reached'
   | 'repair_chosen'
+  | 'ally_joined'
   | 'run_end'
 
 export function startRun(runId: string): void {

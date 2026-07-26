@@ -11,9 +11,28 @@ import { Act2 } from './components/Act2'
 import { EndScreen } from './components/EndScreen'
 import './App.css'
 
+// A reload must not cost the player their run — state is kept in
+// sessionStorage for the life of the tab.
+const SAVE_KEY = 'fv-run-v2'
+
+function loadSave(): { state: GameState; newGamePlus: boolean } | null {
+  try {
+    const raw = sessionStorage.getItem(SAVE_KEY)
+    if (!raw) return null
+    const saved = JSON.parse(raw)
+    if (saved?.state?.phase && saved.state.runId) return saved
+  } catch {
+    // corrupted or stale save — start fresh
+  }
+  return null
+}
+
 function App() {
-  const [state, setState] = useState<GameState>(newGame)
-  const [newGamePlus, setNewGamePlus] = useState(false)
+  const saved = useRef(loadSave()).current
+  const [state, setState] = useState<GameState>(() =>
+    saved && saved.state.phase !== 'start' ? saved.state : newGame(),
+  )
+  const [newGamePlus, setNewGamePlus] = useState(saved?.newGamePlus ?? false)
   const stateRef = useRef(state)
   stateRef.current = state
 
@@ -40,10 +59,17 @@ function App() {
           cash: next.cash,
           heat: next.heat,
           novelty: next.novelty,
+          social: next.social,
           damage: Number(damageScore(next.ledger).toFixed(3)),
           fuses: next.fuses,
         },
       })
+      if (next.allies.length > prev.allies.length) {
+        logEvent(next.runId, 'ally_joined', {
+          turn: prev.turn,
+          payload: { ally: next.allies[next.allies.length - 1], social: next.social },
+        })
+      }
       if (next.currentCardId && cardById(next.currentCardId).crisis) {
         logEvent(next.runId, 'crisis_fired', { turn: next.turn, cardId: next.currentCardId })
       }
@@ -63,12 +89,16 @@ function App() {
     }
     if (next.phase === 'end' && prev.phase !== 'end') {
       const damage = damageScore(next.ledger)
+      const end = ending(next.cash + next.act2.budget, damage, next.folded, next.social)
       logEvent(next.runId, 'run_end', {
         turn: prev.phase === 'act2' ? prev.act2.turn : prev.turn,
         act: prev.phase === 'act2' ? 2 : 1,
         payload: {
-          register: ending(next.cash + next.act2.budget, damage, next.folded).register,
+          register: end.register,
+          held: end.held,
           cash: next.cash,
+          social: next.social,
+          allies: next.allies,
           damage: Number(damage.toFixed(3)),
           learnMoreCount: next.learnMoreCount,
           repairs: next.act2.repairsChosen,
@@ -79,6 +109,12 @@ function App() {
     }
 
     setState(next)
+    try {
+      const ngPlus = next.phase === 'end' || newGamePlus
+      sessionStorage.setItem(SAVE_KEY, JSON.stringify({ state: next, newGamePlus: ngPlus }))
+    } catch {
+      // storage full or unavailable — play continues unsaved
+    }
   }
 
   switch (state.phase) {

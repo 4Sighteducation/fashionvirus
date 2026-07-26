@@ -16,7 +16,7 @@ export function StartScreen({ onStart, newGamePlus }: Props) {
       {newGamePlus && (
         <p className="start-ngplus">New Game+: the ledger is visible from turn one.</p>
       )}
-      <p className="start-note">15–20 minutes · anonymous decision logging for research</p>
+      <p className="start-note">25–30 minutes · anonymous decision logging for research</p>
     </main>
   )
 }
