@@ -5,6 +5,7 @@ import { ACT1_TURNS, stageForTurn } from '../game/engine'
 import { money, LEDGER_LABELS } from '../game/format'
 import type { GameState } from '../game/types'
 import { CardModal } from './CardModal'
+import { Intro, STAT_HELP } from './Intro'
 
 interface Props {
   state: GameState
@@ -17,6 +18,12 @@ const STAGE_LABELS: Record<1 | 2 | 3, string> = {
   1: 'BEDROOM LABEL',
   2: 'HIGH STREET',
   3: 'GLOBAL',
+}
+
+const STAGE_BLURBS: Record<1 | 2 | 3, string> = {
+  1: 'Small runs, hand-finished, every decision yours — and every cost still close enough to see.',
+  2: 'Buyers, minimums, deadlines. The decisions get bigger and the consequences move further away.',
+  3: 'Four continents, one name. You will never meet most of the people your choices land on.',
 }
 
 interface Snapshot {
@@ -72,6 +79,7 @@ function StatTile({
   meter,
   variant,
   deltaFormat,
+  sub,
 }: {
   label: string
   value: string | number
@@ -79,6 +87,7 @@ function StatTile({
   meter?: number
   variant?: string
   deltaFormat?: (n: number) => string
+  sub?: string
 }) {
   return (
     <div className={`tile ${variant ?? ''}`}>
@@ -92,6 +101,7 @@ function StatTile({
           <div className="tile-fill" style={{ width: `${Math.max(0, Math.min(100, meter))}%` }} />
         </div>
       )}
+      {sub && <span className="tile-sub">{sub}</span>}
     </div>
   )
 }
@@ -109,6 +119,28 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
     if (!state.looked) setDealt(false)
   }, [state.currentCardId, state.looked])
   const isCrisisWaiting = !!card?.crisis
+
+  // First-run onboarding — once per browser, never on New Game+.
+  const [showIntro, setShowIntro] = useState(() => {
+    if (state.turn !== 1 || showLedger) return false
+    try {
+      return !localStorage.getItem('fv-intro-seen')
+    } catch {
+      return true
+    }
+  })
+  const dismissIntro = () => {
+    try {
+      localStorage.setItem('fv-intro-seen', '1')
+    } catch {
+      // private mode — the intro will simply show again next time
+    }
+    setShowIntro(false)
+  }
+
+  const [showHelp, setShowHelp] = useState(false)
+  const recurringCash = state.recurring.reduce((sum, r) => sum + (r.cash ?? 0), 0)
+  const seasonsToAwards = ACT1_TURNS - Math.min(state.turn, ACT1_TURNS)
 
   // The interface is complicit: it degrades with the hidden ledger,
   // slowly enough that nobody consciously notices.
@@ -137,6 +169,32 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
         ))}
       </div>
 
+      <div className="act1-context">
+        <p className="stage-blurb">{STAGE_BLURBS[stage]}</p>
+        {seasonsToAwards <= 3 && (
+          <p className="eyebrow awards-countdown">
+            {seasonsToAwards === 0
+              ? 'THE INDUSTRY AWARDS · AFTER THIS SEASON'
+              : `THE INDUSTRY AWARDS · ${seasonsToAwards} SEASON${seasonsToAwards === 1 ? '' : 'S'} AWAY`}
+          </p>
+        )}
+        <button type="button" className="btn-help" onClick={() => setShowHelp((v) => !v)}>
+          {showHelp ? 'Hide' : 'What do these numbers mean?'}
+        </button>
+      </div>
+
+      {showHelp && (
+        <section className="help-panel">
+          {STAT_HELP.map((s) => (
+            <p key={s.label}>
+              <span className="eyebrow help-label">{s.label}</span>
+              {s.label === 'NOVELTY' ? `${s.text} Right now it falls ${state.noveltyDecay} a season.` : s.text}
+            </p>
+          ))}
+          <p className="help-footnote">Some costs never appear up here. That is not a bug.</p>
+        </section>
+      )}
+
       <section className="act1-stats">
         <StatTile
           label="Cash"
@@ -144,6 +202,11 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
           delta={deltas.cash}
           variant={state.cash < 0 ? 'tile-negative' : ''}
           deltaFormat={(n) => `${n > 0 ? '+' : '−'}£${Math.abs(n)}k`}
+          sub={
+            recurringCash !== 0
+              ? `${recurringCash > 0 ? '+' : '−'}£${Math.abs(recurringCash)}k/season · ${state.recurring.length} ongoing commitment${state.recurring.length === 1 ? '' : 's'}`
+              : undefined
+          }
         />
         <StatTile label="Heat" value={Math.round(state.heat)} delta={deltas.heat} meter={state.heat} variant="tile-heat" />
         <StatTile
@@ -152,6 +215,7 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
           delta={deltas.novelty}
           meter={state.novelty}
           variant="tile-novelty"
+          sub={`decays −${state.noveltyDecay}/season`}
         />
         <StatTile
           label="Social capital"
@@ -191,6 +255,13 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
       {state.reaction && <p className="reaction">{state.reaction}</p>}
       {state.allyToast && <p className="ally-toast">{state.allyToast}</p>}
 
+      {state.lastFact && !dealt && !showIntro && (
+        <aside className="record">
+          <span className="eyebrow record-label">The record</span>
+          <p>{state.lastFact}</p>
+        </aside>
+      )}
+
       {card && !dealt && (
         <button
           type="button"
@@ -210,6 +281,8 @@ export function Act1({ state, showLedger, onLearnMore, onChoose }: Props) {
       )}
 
       {state.whisper && <p className="whisper">{state.whisper}</p>}
+
+      {showIntro && <Intro onDone={dismissIntro} />}
     </div>
   )
 }

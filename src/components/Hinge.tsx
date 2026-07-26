@@ -18,6 +18,7 @@ export function Hinge({ state, onEnterAct2 }: Props) {
   if (step === 'fanfare') {
     return (
       <main className="fanfare">
+        <div className="fanfare-backdrop" style={{ backgroundImage: 'url(/assets/editorial/glitch-dress.png)' }} />
         <p className="eyebrow fanfare-kicker">The industry awards</p>
         <h1 className="fanfare-title">
           DISRUPTOR
@@ -25,7 +26,7 @@ export function Hinge({ state, onEnterAct2 }: Props) {
           OF THE YEAR
         </h1>
         <p className="fanfare-line">Valuation: {money(valuation)}</p>
-        <p className="fanfare-line">Twelve seasons. Four continents. One name.</p>
+        <p className="fanfare-line">Sixteen seasons. Four continents. One name.</p>
         <p className="fanfare-line fanfare-ovation">A standing ovation.</p>
         <button className="btn-gold" type="button" onClick={() => setStep('reveal')}>
           Take the stage

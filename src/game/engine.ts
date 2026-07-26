@@ -69,6 +69,7 @@ export function newGame(): GameState {
     looked: false,
     learnMoreCount: 0,
     reaction: null,
+    lastFact: null,
     whisper: null,
     firedWhispers: [],
     firedCrises: [],
@@ -243,6 +244,7 @@ export function reduce(prev: GameState, action: Action): GameState {
         }
       }
       state.reaction = choice.reaction ?? null
+      state.lastFact = card.fact ?? null
       if (shieldFired) {
         state.reaction = [choice.reaction, 'People who know your work speak up. It matters.']
           .filter(Boolean)

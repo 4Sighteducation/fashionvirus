@@ -71,6 +71,9 @@ export interface Card {
   body: string
   /** What LEARN MORE reveals. Looking costs a turn. */
   depth?: string
+  /** A real, sourced figure shown after the decision — the learning layer.
+   *  Keep the source attribution in the text; docs/facts-and-sources.md audits them. */
+  fact?: string
   /** Flow prompt for the card image (see docs/fashion-virus-30-cards.md). */
   art?: string
   choices: Choice[]
@@ -150,6 +153,8 @@ export interface GameState {
   looked: boolean
   learnMoreCount: number
   reaction: string | null
+  /** The real-world figure attached to the card just decided. */
+  lastFact: string | null
   whisper: string | null
   firedWhispers: string[]
   firedCrises: string[]

@@ -1,5 +1,6 @@
 import { WORLD_STATES, allyById, damageScore, ending } from '../game/act2'
 import { ACT1_TURNS } from '../game/engine'
+import { realWorldEquivalents } from '../game/format'
 import type { GameState } from '../game/types'
 
 interface Props {
@@ -7,12 +8,24 @@ interface Props {
   onRestart: () => void
 }
 
+/** Editorial art in the register of the ending — the mended world gets the
+ *  mended gown, the broken one gets the glitch. */
+const END_ART: Record<string, string> = {
+  clean: '/assets/editorial/swatch-coat.png',
+  hard: '/assets/editorial/mended-gown.png',
+  bleak: '/assets/editorial/landfill-gown.png',
+  folded: '/assets/editorial/glitch-shroud.png',
+}
+
 export function EndScreen({ state, onRestart }: Props) {
   const damage = damageScore(state.ledger)
   const end = ending(state.cash + state.act2.budget, damage, state.folded, state.social)
+  const equivalents = realWorldEquivalents(state.ledger)
 
   return (
     <main className={`endscreen end-${end.register} ${end.held ? 'end-held' : ''}`}>
+      <div className="end-backdrop" style={{ backgroundImage: `url(${END_ART[end.register]})` }} />
+      <div className="end-content">
       <h1 className="end-headline">{end.headline}</h1>
       <p className="end-sub">{end.sub}</p>
 
@@ -28,6 +41,23 @@ export function EndScreen({ state, onRestart }: Props) {
         <div className="end-allies">
           <span className="eyebrow end-allies-label">Who stood with you</span>
           <p>{state.allies.map((id) => allyById(id).name).join(' · ')}</p>
+        </div>
+      )}
+
+      {equivalents.length > 0 && (
+        <div className="end-equivalents">
+          <span className="eyebrow end-equivalents-label">What sixteen seasons actually cost</span>
+          <ul>
+            {equivalents.map((e) => (
+              <li key={e.label}>
+                <span className="eyebrow eq-key">{e.label}</span>
+                <span>{e.line}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="end-equivalents-note">
+            Conversions use published industry figures. Every fact shown during your run is real and sourced.
+          </p>
         </div>
       )}
 
@@ -54,6 +84,7 @@ export function EndScreen({ state, onRestart }: Props) {
       <button className="btn-primary" type="button" onClick={onRestart}>
         Play again — with the ledger visible
       </button>
+      </div>
     </main>
   )
 }

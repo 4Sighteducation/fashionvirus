@@ -18,6 +18,7 @@ export const CARDS: Card[] = [
     body: 'The dye house sends swatches. The reactive crimson is extraordinary — it photographs like nothing else and will sell itself. The low-impact alternative is softer, chalkier.',
     depth: 'The colour is achieved with heavy metals; the wastewater is untreated. The mill has been fined twice — both fines cheaper than treatment.',
     art: 'extreme close-up of liquid crimson dye rippling in a steel vat, glossy surface reflection, jewel-like saturation',
+    fact: 'Textile dyeing and finishing is estimated to cause around one fifth of global industrial water pollution. — World Bank',
     choices: [
       {
         id: 'saturated',
@@ -43,6 +44,7 @@ export const CARDS: Card[] = [
     body: "Your bestseller needs leather. One tannery's price you can't ignore; vegetable-tanned costs triple; the synthetic will be called plastic.",
     depth: 'Chromium salts in the water table; cattle on newly cleared land. Nobody in the chain will confirm provenance, and nobody is asking.',
     art: 'a single exquisite tan leather jacket on a wooden hanger against raw concrete, soft window light',
+    fact: 'In tannery districts like Hazaribagh, Dhaka, untreated chrome effluent — some 21,000 cubic metres a day at its peak — left local water unfit to drink. — Human Rights Watch, 2012',
     choices: [
       {
         id: 'chrome',
@@ -72,6 +74,7 @@ export const CARDS: Card[] = [
     title: 'The blend',
     body: 'Virgin polyester is cheap, drapes beautifully, never creases. Recycled costs more and the colour varies. Organic cotton costs more still — and drinks water.',
     art: 'bolts of flowing fabric mid-air in a studio, frozen in motion, silvery drape catching light',
+    fact: 'A single 6 kg wash of polyester fabric can shed up to 700,000 microplastic fibres. — Napper & Thompson, University of Plymouth, 2016',
     choices: [
       {
         id: 'virgin',
@@ -102,6 +105,7 @@ export const CARDS: Card[] = [
     body: 'A viscose supplier offers a silk-soft feel at a cotton price. "Plant-based," the brochure says, over a photograph of leaves.',
     depth: 'The pulp is dissolved with carbon disulphide. Workers at the plant report neurological symptoms. The forest in the brochure is not the forest being cut.',
     art: 'silk-like sage-green fabric cascading over a plinth, botanical shadow play on the backdrop',
+    fact: 'Hundreds of millions of trees are logged every year to be dissolved into cellulosic fabrics like viscose. — Canopy',
     choices: [
       {
         id: 'take_it',
@@ -124,6 +128,7 @@ export const CARDS: Card[] = [
     title: 'The worn-in look',
     body: 'The distressed finish is the look of the season. Sandblasting delivers it at scale for pennies. Laser finishing needs new machinery.',
     art: 'perfectly faded denim jeans laid flat, sculptural creases, dust motes in a shaft of light',
+    fact: 'Turkey banned denim sandblasting in 2009 after workers died of silicosis — incurable, entirely preventable. The practice moved to other countries rather than ending.',
     choices: [
       {
         id: 'sandblast',
@@ -148,6 +153,7 @@ export const CARDS: Card[] = [
     body: 'A single knit goes viral — the softness is the story. Angora at volume is suddenly very available and very cheap.',
     depth: 'The volume price exists because the fibre is plucked, not sheared. There is footage. It has not surfaced. Yet.',
     art: 'an impossibly soft pale knit sweater on a stone surface, single strand of fibre lifting in air',
+    fact: 'After undercover footage of live-plucking surfaced in 2013, hundreds of brands dropped angora within months — one of the fastest supply-chain reversals on record.',
     choices: [
       {
         id: 'scale_knit',
@@ -170,6 +176,7 @@ export const CARDS: Card[] = [
     // "Sometimes the decent thing pays" — deliberately no downside.
     body: 'A mill closure floods the market with gorgeous deadstock fabric — limited, characterful, effectively free of new impact. But quantities are fixed: no reorders, ever.',
     art: 'shelves of assorted vintage fabric rolls in unrepeatable colours, archive-room stillness',
+    fact: 'Roughly 15% of fabric produced for clothing is lost as offcuts or never used at all. — Reverse Resources',
     choices: [
       {
         id: 'build_on_deadstock',
@@ -193,6 +200,7 @@ export const CARDS: Card[] = [
     body: 'An agent offers a unit price a third of what you pay now. The factory is accredited. The photographs look clean.',
     depth: 'The accreditation covers the primary site. Overflow is subcontracted to unaudited units during peak season — which is most of the year.',
     art: 'a pristine factory floor of white sewing stations receding in one-point perspective, empty of people',
+    fact: 'Only around 2% of the world’s garment workers are estimated to earn a living wage. — widely cited industry estimate',
     choices: [
       {
         id: 'sign',
@@ -224,6 +232,7 @@ export const CARDS: Card[] = [
     character: 'Li Pengjian',
     body: 'Li Pengjian proposes paying per garment. Productivity jumps. He mentions, in passing, that Yan Rong and Yao Lin — older, slower, the best work in the building — will earn less.',
     art: 'two tin cups of tea steaming on a workbench beside folded garments, warm side light',
+    fact: 'Labour is typically 2–4% of a garment’s retail price. Doubling a machinist’s wage adds pennies to the shelf price. — Oxfam',
     choices: [
       {
         id: 'piecework',
@@ -254,6 +263,7 @@ export const CARDS: Card[] = [
     title: 'The deadline',
     body: 'The retailer moves your delivery date up three weeks. Miss it and lose the account. The factory says it’s possible — "with overtime."',
     art: 'a loading bay at dusk, sealed boxes stacked to the ceiling, one strip light flickering',
+    fact: 'Excessive overtime is the most commonly found violation in garment-factory audits worldwide. — ILO Better Work',
     choices: [
       {
         id: 'overtime',
@@ -281,6 +291,7 @@ export const CARDS: Card[] = [
     title: 'The sea or the sky',
     body: 'Sea freight lands the drop three weeks after the campaign breaks. Air lands it on time. Nobody will ever see the difference.',
     art: 'aircraft cargo hold interior stacked with shrink-wrapped garment cartons, cold blue light',
+    fact: 'Air freight emits roughly 50 times more CO₂ per tonne-kilometre than sea freight. — ICCT / IMO figures',
     choices: [
       {
         id: 'fly',
@@ -303,6 +314,7 @@ export const CARDS: Card[] = [
     title: 'The audit',
     body: 'A buyer requires a social audit of your supply chain. Your agent offers to "arrange the paperwork" for a fee. A genuine audit costs five times more and might find things.',
     art: 'a thick document bound in white, embossed cover, on a glass desk — pristine, unopened',
+    fact: 'The factories in Rana Plaza had been audited. Social audits routinely miss unauthorised subcontracting and coached interviews. — Clean Clothes Campaign',
     choices: [
       {
         id: 'paperwork',
@@ -327,6 +339,7 @@ export const CARDS: Card[] = [
     title: 'One exit',
     body: 'A worker at a subcontracted unit writes to you directly. The building has one exit. She has attached a photograph. She has cc’d nobody.',
     art: 'a phone face-down on a marble desk beside an espresso, notification light glowing',
+    fact: 'When Rana Plaza collapsed in 2013, killing 1,134 garment workers, cracks had been reported the day before. Workers were ordered back in.',
     choices: [
       {
         id: 'forward',
@@ -351,6 +364,7 @@ export const CARDS: Card[] = [
     title: 'When’s the next drop?',
     body: 'Engagement is falling. The comments are one sentence, over and over: when’s the next drop? Your collection is four weeks old. Four weeks is a long time.',
     art: 'a phone screen glow on a dark bedroom ceiling at 2am',
+    fact: 'Clothing production roughly doubled between 2000 and 2015, while the average number of times a garment is worn fell by 36%. — Ellen MacArthur Foundation',
     choices: [
       {
         id: 'micro_drops',
@@ -420,6 +434,7 @@ export const CARDS: Card[] = [
     title: 'Fashion week',
     body: 'A slot opens at fashion week. The show is 12 minutes long, costs a fortune, and is the industry’s front page.',
     art: 'an empty runway one hour before the show, rows of white chairs, a single spotlight warming up',
+    fact: 'Travel for one year of the four fashion weeks emits an estimated 241,000 tonnes of CO₂e. — Zero to Market, Ordre, 2020',
     choices: [
       {
         id: 'stage_show',
@@ -468,6 +483,7 @@ export const CARDS: Card[] = [
     title: 'Thursday’s board meeting',
     body: 'The board meeting is Thursday. They want 40% growth. They have not asked how.',
     art: 'an empty boardroom, long walnut table, twelve chairs, city haze through floor-to-ceiling glass',
+    fact: 'On its current growth path, fashion could consume a quarter of the world’s remaining carbon budget by 2050. — Ellen MacArthur Foundation, 2017',
     choices: [
       {
         id: 'promise_40',
@@ -543,6 +559,7 @@ export const CARDS: Card[] = [
     title: 'The Conscious Collection',
     body: 'Your agency proposes "The Conscious Collection": eight styles, recycled content, earth-toned campaign, a hang tag with a leaf. Two percent of output. The campaign runs across everything.',
     art: 'a kraft-paper hang tag with an embossed leaf, on a linen background, artfully lit',
+    fact: 'A 2021 European Commission sweep found 42% of online environmental claims were exaggerated, false or deceptive.',
     choices: [
       {
         id: 'launch_it',
@@ -595,6 +612,7 @@ export const CARDS: Card[] = [
     title: 'The takedown',
     body: "A small journalist publishes a piece on your subcontracting. It's accurate. Legal says a cease-and-desist would probably work — she can't afford to fight it.",
     art: 'a printed news article on a desk, a red pen resting across it, unsigned letterhead beneath',
+    fact: 'Lawsuits designed to silence critics who cannot afford to fight have a name — SLAPPs. The EU adopted an anti-SLAPP directive in 2024.',
     choices: [
       {
         id: 'send_letter',
@@ -671,6 +689,7 @@ export const CARDS: Card[] = [
     body: 'The warehouse holds 40,000 units of last season. Discounting damages the brand. Donating raises questions about why you made them. There is a third option nobody puts in writing.',
     depth: 'The "disposal contractor" incinerates. Standard practice, entirely legal, completely undocumented — and the reason your brand holds its price.',
     art: 'shrink-wrapped garment pallets in a dark warehouse aisle, one bay door open to white light',
+    fact: 'Burberry admitted to destroying £28.6 million of unsold stock in 2017. France made destroying unsold goods illegal in 2020.',
     choices: [
       {
         id: 'dispose',
@@ -701,6 +720,7 @@ export const CARDS: Card[] = [
     body: 'Free returns lift conversion 30%. Customers order three sizes and keep one.',
     depth: "A significant share of returns are never resold — processing costs more than the item is worth. They are baled and exported, and what happens next is somebody else's country.",
     art: 'a returns conveyor of open parcels and spilling tissue, receding into industrial gloom',
+    fact: 'In the US alone, returned goods send an estimated 2.6 million tonnes to landfill every year. — Optoro',
     choices: [
       {
         id: 'free_forever',
@@ -724,6 +744,7 @@ export const CARDS: Card[] = [
     title: 'The broker',
     body: 'A broker offers to take all surplus textile — yours and your returns stream — for export as "second-hand goods." Cash positive. Warehouse solved. Papers in order.',
     art: 'shipping containers in fog, doors sealed, customs stamps fresh, gulls on the top edge',
+    fact: 'Ghana’s Kantamanto market receives around 15 million used garments every week. Roughly 40% leave as waste. — The OR Foundation',
     choices: [
       {
         id: 'sign_contract',
@@ -750,6 +771,7 @@ export const CARDS: Card[] = [
     // The late-game counterweight — proof a cleaner model can also be a business.
     body: 'Your data team models a rental subscription for the premium line: lower volume, higher margin per garment, deep customer lock-in — and a fraction of the footprint. The board calls it "brand dilution."',
     art: 'a garment bag on a doorstep at dawn, reused shipping tag with many previous addresses visible',
+    fact: 'Keeping a garment in active use just nine months longer cuts its carbon, water and waste footprints by 20–30%. — WRAP',
     choices: [
       {
         id: 'launch_rental',
@@ -811,6 +833,7 @@ export const CARDS: Card[] = [
     body: 'The new line needs a base fabric. Three quotes on the desk. There is no fourth option.',
     depth: "A lifecycle analyst's memo: \"Each option externalises a different cost onto a different place. The question is not which is clean. The question is which harm you choose to own.\"",
     art: 'three fabric swatches pinned side by side on a studio wall, morning light, entirely neutral',
+    fact: 'One cotton shirt takes about 2,700 litres of water to make — what one person drinks in two and a half years. — WWF',
     choices: [
       {
         id: 'organic',
@@ -841,6 +864,7 @@ export const CARDS: Card[] = [
     body: 'You move to cap hours at the factory after the deadline crunch. Li Pengjian brings you a petition — signed by 140 workers — against the cap. Peak-season overtime is school fees, medicine, remittances. "They are asking you not to protect them."',
     depth: 'Yan Rong, privately: "The young ones want the hours. I am tired. Both things are true."',
     art: 'a folded paper petition on a workbench, many signatures visible as marks, not readable',
+    fact: 'For millions of garment workers, overtime is the only route from poverty pay toward a living income — the base wage is the problem, not the hours. — Clean Clothes Campaign',
     choices: [
       {
         id: 'impose_cap',
@@ -874,6 +898,7 @@ export const CARDS: Card[] = [
     body: "A fast-fashion conglomerate — everything you're supposedly against — offers £400k for a 10% stake in your repair-and-resale arm. Their money would take circular fashion mainstream through their 900 stores. Your name stays off it.",
     depth: 'Their sustainability director, off the record: "I have a real budget for exactly three years, then I\'m replaced. Use me or don\'t."',
     art: 'two coffee cups on a glass table between facing chairs, one branded lanyard just out of focus',
+    fact: 'Less than 1% of the material used to make clothing is recycled into new clothing. — Ellen MacArthur Foundation, 2017',
     choices: [
       {
         id: 'take_it',
@@ -899,6 +924,7 @@ export const CARDS: Card[] = [
     body: 'The worker who emailed about the single exit writes again. An audit is scheduled. If you act on her photograph, the subcontractor will know exactly who talked. She asks you to wait until she finds other work. The building is still the building.',
     depth: 'The fire-safety engineer\'s report: "Probability of incident: low per month. Not zero. Cumulative."',
     art: 'an inbox on a dark screen, one unread message, cursor hovering — nothing else lit',
+    fact: 'After Rana Plaza, the legally binding Bangladesh Accord inspected over 1,600 factories and fixed more than 120,000 safety hazards — because workers finally had a protected way to speak.',
     choices: [
       {
         id: 'act_now',
@@ -932,6 +958,7 @@ export const CARDS: Card[] = [
     body: 'Your sustainable line works — at £120 a garment. A buyer for a value chain offers to license a simplified version at £15: heavier polyester blend, offshore production, but genuinely durable and repairable. "Sustainability that only the rich can buy isn\'t sustainability. It\'s positioning."',
     depth: 'Lifecycle data: the £15 durable blend, worn for years, can out-perform the £120 organic piece worn twice. Ownership behaviour, not fibre, dominates the footprint.',
     art: 'two identical white shirts on one rail, price tags turned away',
+    fact: 'How long a garment stays in use matters more than what it is made of: doubling wears roughly halves the footprint per wear. — WRAP',
     choices: [
       {
         id: 'license_it',
@@ -1022,6 +1049,7 @@ export const CARDS: Card[] = [
     crisis: { tags: ['toxic_discharge'], count: 1 },
     title: 'The river ran crimson',
     body: 'A photo is trending: the river below your dye house, running your signature colour, dead fish at the outfall. Your name is not attached. Yet.',
+    fact: 'In Xintang, China’s denim capital, the river below the mills ran indigo; sediment tests found cadmium, chromium and lead. — Greenpeace, 2010',
     depth: 'The dye house serves four brands. The crimson is only yours.',
     choices: [
       {
@@ -1052,6 +1080,7 @@ export const CARDS: Card[] = [
     crisis: { tags: ['worker_grievance'], count: 3 },
     title: 'The fire',
     body: 'A blaze on the third floor of a subcontracted unit, 2am, during the rush shift. Eleven injured. The fire doors were chained. Your agent is not answering his phone.',
+    fact: 'The 2012 Tazreen Fashions fire killed at least 112 workers. Exits were blocked; managers told workers the alarm was a drill.',
     depth: 'The chains were on the doors because of the unit price. The rush shift existed because of the deadline you set.',
     choices: [
       {
@@ -1172,8 +1201,8 @@ const ART_JPEG = new Set([
   'the_takedown', 'unsold_stock', 'viscose_forest',
 ])
 const ART_PNG = new Set([
-  'angora_moment', 'd_access_or_purity', 'd_mill_town', 'd_no_clean_fabric',
-  'd_overtime_petition', 'd_the_recall', 'leather_sourcing',
+  'angora_moment', 'd_access_or_purity', 'd_dirty_money', 'd_mill_town', 'd_no_clean_fabric',
+  'd_overtime_petition', 'd_the_recall', 'd_whistleblower', 'leather_sourcing',
 ])
 
 export function cardArt(id: string): string | null {
