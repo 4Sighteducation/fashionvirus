@@ -1,16 +1,23 @@
 import { CARDS, FUSE_LABELS, cardById } from './cards'
 import { ALLIES, WHISPERS, damageScore, repairById, repairCost } from './act2'
-import type { Card, Choice, GameState, Ledger } from './types'
+import type {
+  BrandIdentity,
+  Card,
+  Choice,
+  DeskActionId,
+  FollowUpOption,
+  GameState,
+  Ledger,
+  SurfaceEffects,
+} from './types'
 
 export const ACT1_TURNS = 16
 export const ACT2_TURNS = 5
+export const SOCIAL_BUFFER_AT = 50
+export const CRISIS_SHIELD_AT = 60
 const BASE_NOVELTY_DECAY = 7
 const STARTING_CASH = 20
 const STARTING_SOCIAL = 5
-/** Community keeps buying when the feed moves on. */
-const SOCIAL_BUFFER_AT = 50
-/** People who know your work speak up — absorbs one crisis. */
-const CRISIS_SHIELD_AT = 60
 
 const emptyLedger = (): Ledger => ({
   water: 0,
@@ -36,7 +43,21 @@ export function stageForTurn(turn: number): 1 | 2 | 3 {
   return 3
 }
 
-export function newGame(): GameState {
+/** Abstract fuse pressure for the desk gauge — never names the ledger. */
+export function pressureLevel(fuses: string[]): 'quiet' | 'uneasy' | 'volatile' {
+  const n = fuses.length
+  if (n >= 5) return 'volatile'
+  if (n >= 2) return 'uneasy'
+  return 'quiet'
+}
+
+export function pressureLabel(level: 'quiet' | 'uneasy' | 'volatile'): string {
+  if (level === 'volatile') return 'Volatile'
+  if (level === 'uneasy') return 'Uneasy'
+  return 'Quiet'
+}
+
+export function newGame(preservedBrand?: BrandIdentity | null): GameState {
   const deck: Record<1 | 2 | 3, string[]> = { 1: [], 2: [], 3: [] }
   for (const card of CARDS) {
     if (!card.crisis) deck[card.stage].push(card.id)
@@ -46,6 +67,7 @@ export function newGame(): GameState {
   deck[3] = shuffle(deck[3])
 
   const first = deck[1].shift() ?? null
+  const brand = preservedBrand ?? null
 
   return {
     phase: 'start',
@@ -75,6 +97,11 @@ export function newGame(): GameState {
     firedCrises: [],
     folded: false,
     act2: { turn: 1, budget: 0, repairsChosen: [], healed: emptyLedger() },
+    brand,
+    pendingPing: null,
+    history: [{ turn: 1, cash: STARTING_CASH, heat: 10, novelty: 50, social: STARTING_SOCIAL }],
+    deskActionUsed: false,
+    teaserCount: 0,
   }
 }
 
@@ -82,14 +109,12 @@ function countFuses(state: GameState, tags: string[]): number {
   return state.fuses.filter((f) => tags.includes(f)).length
 }
 
-/** Crisis check: any unfired crisis card whose tag threshold is met may fire. */
 function maybeCrisis(state: GameState): Card | null {
   const candidates = CARDS.filter((c) => {
     if (!c.crisis || state.firedCrises.includes(c.id)) return false
     return countFuses(state, c.crisis.tags) >= c.crisis.count
   })
   if (candidates.length === 0) return null
-  // Consequences are probabilistic — a fuse is a fuse, not a timer.
   if (Math.random() > 0.55) return null
   return candidates[Math.floor(Math.random() * candidates.length)]
 }
@@ -127,14 +152,35 @@ function applyLedger(ledger: Ledger, delta: Partial<Ledger>): void {
   }
 }
 
-function applySurface(state: GameState, choice: Choice): void {
-  state.cash += choice.surface.cash ?? 0
-  state.heat = Math.min(100, Math.max(0, state.heat + (choice.surface.heat ?? 0)))
-  state.novelty = Math.min(100, Math.max(0, state.novelty + (choice.surface.novelty ?? 0)))
-  state.social = Math.min(100, Math.max(0, state.social + (choice.surface.social ?? 0)))
+function applySurfaceDelta(state: GameState, surface: SurfaceEffects | undefined): void {
+  if (!surface) return
+  state.cash += surface.cash ?? 0
+  state.heat = Math.min(100, Math.max(0, state.heat + (surface.heat ?? 0)))
+  state.novelty = Math.min(100, Math.max(0, state.novelty + (surface.novelty ?? 0)))
+  state.social = Math.min(100, Math.max(0, state.social + (surface.social ?? 0)))
 }
 
-/** Allies join at social milestones. One toast at a time; the rest queue naturally. */
+/** Thesis reshapes how surface deltas land. */
+function thesisScale(state: GameState, surface: SurfaceEffects): SurfaceEffects {
+  const thesis = state.brand?.thesis
+  if (!thesis) return surface
+  const out = { ...surface }
+  if (thesis === 'growth') {
+    if (out.social && out.social > 0) out.social = Math.max(1, Math.round(out.social * 0.6))
+  } else if (thesis === 'integrity') {
+    if (out.social && out.social > 0) out.social = Math.round(out.social * 1.4)
+    if (out.cash && out.cash > 0) out.cash = Math.max(1, Math.round(out.cash * 0.85))
+    if (out.cash && out.cash < 0) out.cash = Math.round(out.cash * 1.1)
+  } else if (thesis === 'craft') {
+    if (out.heat && out.heat > 0) out.heat = Math.max(1, Math.round(out.heat * 0.7))
+  }
+  return out
+}
+
+function applySurface(state: GameState, choice: Choice): void {
+  applySurfaceDelta(state, thesisScale(state, choice.surface))
+}
+
 function checkAllies(state: GameState): void {
   for (const ally of ALLIES) {
     if (state.social >= ally.threshold && !state.allies.includes(ally.id)) {
@@ -145,7 +191,42 @@ function checkAllies(state: GameState): void {
   }
 }
 
-/** Advance the market clock one tick: recurring effects, then novelty decay. */
+function pushHistory(state: GameState): void {
+  state.history.push({
+    turn: state.turn,
+    cash: state.cash,
+    heat: state.heat,
+    novelty: state.novelty,
+    social: state.social,
+  })
+  if (state.history.length > 8) state.history = state.history.slice(-8)
+}
+
+function personalise(text: string, brandName: string | undefined): string {
+  if (!brandName) return text
+  return text.replace(/\{brand\}/g, brandName)
+}
+
+function queueFollowUp(state: GameState, choice: Choice): void {
+  if (state.pendingPing || !choice.followUp) return
+  if (Math.random() > choice.followUp.chance) return
+  const name = state.brand?.name
+  const from =
+    state.social >= 45 && state.allies.length > 0 && Math.random() < 0.35
+      ? personalise('Yan Rong — {brand} studio', name)
+      : personalise(choice.followUp.from, name)
+  state.pendingPing = {
+    from,
+    preview: personalise(choice.followUp.preview, name),
+    body: personalise(choice.followUp.body, name),
+    options: choice.followUp.options.map((o) => ({
+      ...o,
+      label: personalise(o.label, name),
+    })),
+    ignore: { heat: -2, social: -1 },
+  }
+}
+
 function tick(state: GameState): void {
   for (const r of state.recurring) {
     state.cash += r.cash ?? 0
@@ -155,18 +236,33 @@ function tick(state: GameState): void {
   state.recurring = state.recurring.filter((r) => r.turns === undefined || r.turns > 0)
   state.novelty = Math.max(0, state.novelty - state.noveltyDecay)
   if (state.novelty <= 0) {
-    // Unsold stock, unpaid invoices. The trap has teeth —
-    // unless a community keeps buying when the feed moves on.
     const buffered = state.social >= SOCIAL_BUFFER_AT
     state.cash -= buffered ? 4 : 8
     state.heat = Math.max(0, state.heat - (buffered ? 2 : 4))
   }
 }
 
+function applyFollowOption(state: GameState, option: FollowUpOption): void {
+  applySurfaceDelta(state, thesisScale(state, option.surface ?? {}))
+  if (option.fuses) state.fuses.push(...option.fuses)
+  if (option.clearsFuses) {
+    for (const tag of option.clearsFuses) {
+      const i = state.fuses.indexOf(tag)
+      if (i !== -1) state.fuses.splice(i, 1)
+    }
+  }
+  if (option.reaction) state.reaction = personalise(option.reaction, state.brand?.name)
+  checkAllies(state)
+}
+
 export type Action =
   | { type: 'start' }
+  | { type: 'setup_brand'; brand: BrandIdentity }
   | { type: 'learn_more' }
   | { type: 'choose'; choiceId: string }
+  | { type: 'resolve_ping'; optionId: string }
+  | { type: 'ignore_ping' }
+  | { type: 'desk_action'; actionId: DeskActionId }
   | { type: 'enter_act2' }
   | { type: 'repair'; repairId: string }
   | { type: 'skip_repair' }
@@ -176,43 +272,64 @@ export type Action =
 export function reduce(prev: GameState, action: Action): GameState {
   const state: GameState = structuredClone(prev)
 
+  // Migrate older saves missing new fields
+  if (!state.history) state.history = []
+  if (state.deskActionUsed === undefined) state.deskActionUsed = false
+  if (state.teaserCount === undefined) state.teaserCount = 0
+  if (state.pendingPing === undefined) state.pendingPing = null
+  if (state.brand === undefined) state.brand = null
+
   switch (action.type) {
     case 'start': {
+      // New Game+ keeps the label — skip setup.
+      state.phase = state.brand ? 'act1' : 'setup'
+      return state
+    }
+
+    case 'setup_brand': {
+      state.brand = action.brand
+      // Thesis sets the opening novelty decay slightly.
+      if (action.brand.thesis === 'growth') state.noveltyDecay = BASE_NOVELTY_DECAY - 2
+      if (action.brand.thesis === 'integrity') state.noveltyDecay = BASE_NOVELTY_DECAY
+      if (action.brand.thesis === 'craft') state.noveltyDecay = BASE_NOVELTY_DECAY + 1
       state.phase = 'act1'
       return state
     }
 
     case 'learn_more': {
       if (state.looked || !state.currentCardId) return prev
-      // Looking costs a turn: the clock advances, the market cools, the card waits.
       state.looked = true
       state.learnMoreCount += 1
       if (state.turn < ACT1_TURNS) state.turn += 1
       tick(state)
+      pushHistory(state)
       state.reaction = null
+      state.deskActionUsed = false
       return state
     }
 
     case 'choose': {
-      if (!state.currentCardId) return prev
+      if (!state.currentCardId || state.pendingPing) return prev
       const card = cardById(state.currentCardId)
       const baseChoice = card.choices.find((c) => c.id === action.choiceId)
       if (!baseChoice) return prev
+
+      if (baseChoice.requiresSocial && state.social < baseChoice.requiresSocial) return prev
+
       let choice = baseChoice
       state.allyToast = null
 
-      // ── special kinds ──
       if (choice.kind === 'inspect') {
-        // Costs the turn, reveals the depth for free. The card waits.
         applySurface(state, choice)
         state.looked = true
         if (state.turn < ACT1_TURNS) state.turn += 1
         tick(state)
+        pushHistory(state)
         state.reaction = null
+        state.deskActionUsed = false
         return state
       }
 
-      // Crisis shield: once per run, high social capital halves the hit.
       let shieldFired = false
       if (card.crisis && state.social >= CRISIS_SHIELD_AT && !state.crisisShieldUsed) {
         state.crisisShieldUsed = true
@@ -236,25 +353,30 @@ export function reduce(prev: GameState, action: Action): GameState {
           if (i !== -1) state.fuses.splice(i, 1)
         }
       }
-      if (choice.recurring) state.recurring.push({ ...choice.recurring })
+      if (choice.recurring) {
+        state.recurring.push({
+          ...choice.recurring,
+          label: choice.recurring.label ?? choice.label,
+        })
+      }
       if (choice.decayDelta) state.noveltyDecay += choice.decayDelta
       if (choice.worldStates) {
         for (const ws of choice.worldStates) {
           if (!state.worldStates.includes(ws)) state.worldStates.push(ws)
         }
       }
-      state.reaction = choice.reaction ?? null
+      state.reaction = choice.reaction ? personalise(choice.reaction, state.brand?.name) : null
       state.lastFact = card.fact ?? null
       if (shieldFired) {
-        state.reaction = [choice.reaction, 'People who know your work speak up. It matters.']
+        state.reaction = [state.reaction, 'People who know your work speak up. It matters.']
           .filter(Boolean)
           .join(' ')
       }
-      if (choice.whisper) state.whisper = choice.whisper
+      if (choice.whisper) state.whisper = personalise(choice.whisper, state.brand?.name)
       checkAllies(state)
+      queueFollowUp(state, choice)
 
       if (choice.kind === 'audit') {
-        // The real audit: the hidden machinery, itemised.
         state.fusesRevealed = true
         const found = [...new Set(state.fuses)].map((f) => FUSE_LABELS[f] ?? f)
         state.reaction =
@@ -265,7 +387,6 @@ export function reduce(prev: GameState, action: Action): GameState {
 
       if (choice.kind === 'documentary_grant') {
         if (state.fuses.length >= 2) {
-          // Everything comes out, early, on your terms — at a price.
           state.cash -= 30
           state.heat = Math.max(0, state.heat - 8)
           state.firedCrises = CARDS.filter((c) => c.crisis).map((c) => c.id)
@@ -276,14 +397,12 @@ export function reduce(prev: GameState, action: Action): GameState {
         }
       }
       if (choice.kind === 'documentary_decline') {
-        // Every active fuse burns a little hotter.
         state.fuses.push(...new Set(state.fuses))
         state.reaction = 'The film happens anyway. Your logo is in the b-roll, twice.'
       }
 
       tick(state)
 
-      // Ruin check — the systems, not the author.
       if (state.cash <= -40) {
         state.folded = true
         state.phase = 'end'
@@ -292,9 +411,12 @@ export function reduce(prev: GameState, action: Action): GameState {
 
       state.turn += 1
       state.looked = false
+      state.deskActionUsed = false
+      pushHistory(state)
 
       if (state.turn > ACT1_TURNS) {
         state.currentCardId = null
+        state.pendingPing = null
         state.phase = 'hinge'
         return state
       }
@@ -308,10 +430,63 @@ export function reduce(prev: GameState, action: Action): GameState {
       return state
     }
 
+    case 'resolve_ping': {
+      if (!state.pendingPing) return prev
+      const option = state.pendingPing.options.find((o) => o.id === action.optionId)
+      if (!option) return prev
+      applyFollowOption(state, option)
+      state.pendingPing = null
+      return state
+    }
+
+    case 'ignore_ping': {
+      if (!state.pendingPing) return prev
+      applySurfaceDelta(state, state.pendingPing.ignore)
+      state.reaction = 'You leave it on read. The silence has a cost.'
+      state.pendingPing = null
+      return state
+    }
+
+    case 'desk_action': {
+      if (state.deskActionUsed || state.pendingPing || state.phase !== 'act1') return prev
+      state.deskActionUsed = true
+      state.allyToast = null
+
+      switch (action.actionId) {
+        case 'repair_clinic':
+          if (state.cash < 6) return prev
+          applySurfaceDelta(state, thesisScale(state, { cash: -3, social: 3, novelty: -1 }))
+          state.reaction = 'Six people. Two machines. One Tuesday. The class fills next week.'
+          break
+        case 'teaser': {
+          const socialHit = state.teaserCount >= 3 ? -2 : state.teaserCount >= 1 ? -1 : 0
+          applySurfaceDelta(state, thesisScale(state, { novelty: 7, social: socialHit, heat: 2 }))
+          state.teaserCount += 1
+          state.reaction =
+            state.teaserCount >= 3
+              ? 'The feed bites. Comments call it desperate. Novelty spikes anyway.'
+              : 'A thirty-second teaser. The feed wakes up.'
+          break
+        }
+        case 'overtime':
+          applySurfaceDelta(state, { cash: 6, social: -2 })
+          state.fuses.push('worker_grievance')
+          state.recurring.push({ cash: 3, turns: 1, label: 'Rushed delivery premium' })
+          state.reaction = 'The order ships. The night shift does not forget.'
+          break
+        case 'sit_tight':
+          state.reaction = 'You do nothing. Sometimes that is the move.'
+          break
+      }
+      checkAllies(state)
+      return state
+    }
+
     case 'enter_act2': {
       state.phase = 'act2'
-      // The crash takes most of it. You arrive poor.
       state.act2.budget = Math.max(15, Math.round(state.cash * 0.25))
+      // Craft thesis: a little more repair budget — meaning, not magic.
+      if (state.brand?.thesis === 'craft') state.act2.budget += 12
       return state
     }
 
@@ -319,8 +494,6 @@ export function reduce(prev: GameState, action: Action): GameState {
       const repair = repairById(action.repairId)
       if (repair.requiresSocial && state.social < repair.requiresSocial) return prev
       const damage = damageScore(state.ledger)
-      // Costs scale with how broken the world is — and shrink with the
-      // people who show up to help.
       const cost = repairCost(repair, damage, state.social, state.act2.repairsChosen)
       if (cost > state.act2.budget) return prev
       state.act2.budget -= cost
@@ -348,7 +521,7 @@ export function reduce(prev: GameState, action: Action): GameState {
     }
 
     case 'restart': {
-      return newGame()
+      return newGame(state.brand)
     }
 
     default:
@@ -357,3 +530,11 @@ export function reduce(prev: GameState, action: Action): GameState {
 }
 
 export { damageScore }
+
+/** Soft-lock copy for choices the player can't yet take. */
+export function choiceLockedReason(choice: Choice, social: number): string | null {
+  if (choice.requiresSocial && social < choice.requiresSocial) {
+    return `Needs social ${choice.requiresSocial} — nobody will vouch for this yet`
+  }
+  return null
+}

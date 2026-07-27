@@ -7,6 +7,7 @@ interface Props {
   state: GameState
   onLearnMore: () => void
   onChoose: (choiceId: string) => void
+  lockedReason?: (choice: Choice) => string | null
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -18,8 +19,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   endoflife: 'DECISION · END OF LIFE',
 }
 
-/** Surface effects, shown honestly. The hidden ledger stays hidden —
- *  informed on the surface, blind underneath. */
 function Chips({ choice }: { choice: Choice }) {
   const { cash, heat, novelty, social } = choice.surface
   const chips: { key: string; text: string; cls: string }[] = []
@@ -40,9 +39,10 @@ function Chips({ choice }: { choice: Choice }) {
   )
 }
 
-export function CardModal({ card, state, onLearnMore, onChoose }: Props) {
+export function CardModal({ card, state, onLearnMore, onChoose, lockedReason }: Props) {
   const isCrisis = !!card.crisis
   const art = isCrisis ? null : cardArt(card.id)
+  const brandName = state.brand?.name
 
   return (
     <div className="cardmodal-backdrop">
@@ -76,12 +76,22 @@ export function CardModal({ card, state, onLearnMore, onChoose }: Props) {
             )}
 
             <div className="cardmodal-choices">
-              {card.choices.map((choice) => (
-                <button key={choice.id} type="button" className="cardmodal-choice" onClick={() => onChoose(choice.id)}>
-                  <span className="cardmodal-choice-label">{choice.label}</span>
-                  <Chips choice={choice} />
-                </button>
-              ))}
+              {card.choices.map((choice) => {
+                const locked = lockedReason?.(choice) ?? null
+                return (
+                  <button
+                    key={choice.id}
+                    type="button"
+                    className={`cardmodal-choice ${locked ? 'choice-locked' : ''}`}
+                    disabled={!!locked}
+                    onClick={() => !locked && onChoose(choice.id)}
+                    title={locked ?? undefined}
+                  >
+                    <span className="cardmodal-choice-label">{choice.label}</span>
+                    {locked ? <span className="choice-lock-reason">{locked}</span> : <Chips choice={choice} />}
+                  </button>
+                )
+              })}
             </div>
 
             {card.depth && !state.looked && (
@@ -92,7 +102,7 @@ export function CardModal({ card, state, onLearnMore, onChoose }: Props) {
           </div>
 
           <footer className="cardmodal-footer">
-            <span>FASHION VIRUS</span>
+            <span>{brandName ?? 'FASHION VIRUS'}</span>
             <span>
               SEASON {Math.min(state.turn, ACT1_TURNS)} · {isCrisis ? 'UNSCHEDULED' : card.category.toUpperCase()}
             </span>

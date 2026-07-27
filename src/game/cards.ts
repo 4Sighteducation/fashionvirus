@@ -27,6 +27,27 @@ export const CARDS: Card[] = [
         hidden: { water: 2 },
         fuses: ['toxic_discharge'],
         whisper: 'The river below the mill is running an unusual colour this week.',
+        followUp: {
+          chance: 0.7,
+          from: 'Mill — night shift',
+          preview: 'About the crimson run…',
+          body: 'The outfall ran darker than usual after your batch. Do we keep the recipe for the reorder?',
+          options: [
+            {
+              id: 'keep_recipe',
+              label: 'Keep the recipe',
+              surface: { cash: 4, heat: 2 },
+              fuses: ['toxic_discharge'],
+              reaction: 'They keep running crimson. The river keeps the receipt.',
+            },
+            {
+              id: 'switch_batch',
+              label: 'Switch the reorder',
+              surface: { cash: -3, social: 2 },
+              reaction: 'The next batch is chalkier. Sales dip. Sleep is easier.',
+            },
+          ],
+        },
       },
       {
         id: 'low_impact',
@@ -241,6 +262,28 @@ export const CARDS: Card[] = [
         hidden: { labour: 60 },
         fuses: ['worker_grievance'],
         whisper: 'Li Pengjian asks whether you might meet the workers to discuss the pay structure.',
+        followUp: {
+          chance: 0.75,
+          from: 'Yan Rong',
+          preview: 'Can we talk about the rates?',
+          body: 'Three of us are slower on the new rate. We will stay if the floor rate holds. Otherwise we go.',
+          options: [
+            {
+              id: 'hold_floor',
+              label: 'Hold a floor rate',
+              surface: { cash: -4, social: 3 },
+              clearsFuses: ['worker_grievance'],
+              reaction: 'The floor rate costs pennies per garment. Yan Rong stays.',
+            },
+            {
+              id: 'hold_line',
+              label: 'Hold the line',
+              surface: { cash: 2, social: -2 },
+              fuses: ['worker_grievance'],
+              reaction: 'Two machines are empty on Monday. Output is still up.',
+            },
+          ],
+        },
       },
       {
         id: 'tea',
@@ -248,6 +291,26 @@ export const CARDS: Card[] = [
         label: 'Meet the workers; offer them tea',
         surface: { cash: 13, heat: 3, social: 5 },
         reaction: 'Yan Rong shows you a seam technique you have never seen. You keep the pay structure and gain a design.',
+        followUp: {
+          chance: 0.55,
+          from: 'Yan Rong',
+          preview: 'Tuesday class?',
+          body: 'A few of us want to teach mending after hours under the {brand} name. Yes?',
+          options: [
+            {
+              id: 'yes_class',
+              label: 'Yes — make space',
+              surface: { cash: -2, social: 3 },
+              reaction: 'The Tuesday class starts with four people. Next week, nine.',
+            },
+            {
+              id: 'not_now_class',
+              label: 'Not this season',
+              surface: { social: 1 },
+              reaction: 'She nods. The offer will come again.',
+            },
+          ],
+        },
       },
       {
         id: 'raise_pay',
@@ -271,6 +334,27 @@ export const CARDS: Card[] = [
         surface: { cash: 16, heat: 8, social: -2 },
         hidden: { labour: 90 },
         fuses: ['worker_grievance'],
+        followUp: {
+          chance: 0.8,
+          from: 'Buyer — Selfridges',
+          preview: 'Can you ship Friday?',
+          body: 'Loved the samples. If {brand} can hit Friday we lock autumn. Need a yes in the hour.',
+          options: [
+            {
+              id: 'ship_friday',
+              label: 'Commit to Friday',
+              surface: { cash: 8, heat: 4, social: -2 },
+              fuses: ['worker_grievance'],
+              reaction: 'Friday ships. The night shift does not clap.',
+            },
+            {
+              id: 'need_week',
+              label: 'Ask for a week',
+              surface: { heat: -3, social: 1 },
+              reaction: 'They take half the order. The other half goes to someone faster.',
+            },
+          ],
+        },
       },
       {
         id: 'partial',
@@ -298,6 +382,26 @@ export const CARDS: Card[] = [
         label: 'Fly it',
         surface: { cash: -9, heat: 8 },
         hidden: { carbon: 340 },
+        followUp: {
+          chance: 0.55,
+          from: 'Freight broker',
+          preview: 'Same lane next drop?',
+          body: 'Air slot held for your next campaign. Lock it now and the rate holds.',
+          options: [
+            {
+              id: 'lock_air',
+              label: 'Lock the air slot',
+              surface: { cash: -6, heat: 3 },
+              reaction: 'The calendar fills with flight numbers.',
+            },
+            {
+              id: 'release_slot',
+              label: 'Release it',
+              surface: { novelty: -4, social: 1 },
+              reaction: 'You leave margin for the sea. The feed may not wait.',
+            },
+          ],
+        },
       },
       {
         id: 'sea',
@@ -536,6 +640,27 @@ export const CARDS: Card[] = [
         label: 'Take it and change nothing',
         surface: { cash: 150, heat: 4, social: -2 },
         fuses: ['greenwashing_claim'],
+        followUp: {
+          chance: 0.65,
+          from: 'ESG analyst — LinkedIn',
+          preview: 'Quick question on your KPIs',
+          body: 'Congrats on the green bond. Which new targets did {brand} add beyond last year’s baseline?',
+          options: [
+            {
+              id: 'vague_reply',
+              label: 'Send the deck',
+              surface: { heat: 2, social: -1 },
+              fuses: ['greenwashing_claim'],
+              reaction: 'The deck is beautiful. The question remains.',
+            },
+            {
+              id: 'honest_reply',
+              label: 'Admit nothing new',
+              surface: { cash: -10, social: 2, heat: -4 },
+              reaction: 'They mark you down a notch. Sleep is cheaper than a lawsuit.',
+            },
+          ],
+        },
       },
       {
         id: 'raise_the_bar',
@@ -568,6 +693,27 @@ export const CARDS: Card[] = [
         hidden: { waste: 2 },
         fuses: ['greenwashing_claim'],
         whisper: 'A sustainability blogger posts a thread. It has 200 views.',
+        followUp: {
+          chance: 0.7,
+          from: 'Journalist — The Guardian',
+          preview: 'Conscious Collection — 2%?',
+          body: 'We have the hang-tag art and the production share. Comment before noon?',
+          options: [
+            {
+              id: 'no_comment',
+              label: 'No comment',
+              surface: { heat: -6, social: -2 },
+              fuses: ['greenwashing_claim'],
+              reaction: 'The piece runs without you. Your silence is the pull-quote.',
+            },
+            {
+              id: 'own_it',
+              label: 'Own the 2%',
+              surface: { heat: -4, social: 2 },
+              reaction: 'You say the quiet part out loud. Some people respect that.',
+            },
+          ],
+        },
       },
       {
         id: 'reformulate',
@@ -596,6 +742,27 @@ export const CARDS: Card[] = [
         surface: { heat: 18, novelty: 28, cash: -12 },
         hidden: { waste: 3, carbon: 12 },
         whisper: "180 parcels are never opened. You don't know this.",
+        requiresSocial: 12,
+        followUp: {
+          chance: 0.5,
+          from: 'Intern — PR',
+          preview: 'Vinted is flooded',
+          body: 'Half the seeding stock is already listed second-hand with tags on. Pull the next batch?',
+          options: [
+            {
+              id: 'pull_batch',
+              label: 'Pull the next batch',
+              surface: { novelty: -6, social: 1 },
+              reaction: 'You stop the bleed. The feed cools.',
+            },
+            {
+              id: 'ignore_vinted',
+              label: 'Ignore it',
+              surface: { heat: 3, social: -1 },
+              reaction: 'The listings multiply. So does the reach.',
+            },
+          ],
+        },
       },
       {
         id: 'seed_narrow',
@@ -728,6 +895,27 @@ export const CARDS: Card[] = [
         surface: { cash: 21, heat: 13 },
         hidden: { waste: 18, carbon: 70 },
         fuses: ['greenwashing_claim'],
+        followUp: {
+          chance: 0.6,
+          from: 'Warehouse lead',
+          preview: 'Returns bay is full',
+          body: 'We cannot process this volume. Bale and export, or pause free returns for a week?',
+          options: [
+            {
+              id: 'bale_export',
+              label: 'Bale and export',
+              surface: { cash: 4, social: -2 },
+              fuses: ['greenwashing_claim'],
+              reaction: 'The bay clears. Somewhere else, a beach does not.',
+            },
+            {
+              id: 'pause_returns',
+              label: 'Pause free returns',
+              surface: { cash: -5, heat: -4, social: 1 },
+              reaction: 'Conversion dips. The bay breathes.',
+            },
+          ],
+        },
       },
       {
         id: 'paid_returns',
@@ -750,10 +938,31 @@ export const CARDS: Card[] = [
         id: 'sign_contract',
         label: 'Sign the contract',
         surface: { social: -3 },
-        recurring: { cash: 11, hidden: { waste: 30 } },
+        recurring: { cash: 11, hidden: { waste: 30 }, label: 'Export broker contract' },
         fuses: ['greenwashing_claim', 'greenwashing_claim'],
         whisper: "A geography teacher tags you in a photo of a beach. You don't open it.",
         reaction: 'The warehouse empties. £11k a turn, ongoing.',
+        followUp: {
+          chance: 0.75,
+          from: 'OR Foundation — Accra',
+          preview: 'Your bales at Kantamanto',
+          body: 'We photographed bales with {brand} tags this morning. Comment for our report?',
+          options: [
+            {
+              id: 'no_reply_or',
+              label: 'Do not reply',
+              surface: { social: -3, heat: -2 },
+              fuses: ['greenwashing_claim'],
+              reaction: 'The report publishes without you. The photos do the talking.',
+            },
+            {
+              id: 'fund_sort',
+              label: 'Offer sorting funds',
+              surface: { cash: -15, social: 4 },
+              reaction: 'They take the money. They keep the photos. Fair.',
+            },
+          ],
+        },
       },
       {
         id: 'sorting_op',
@@ -777,8 +986,28 @@ export const CARDS: Card[] = [
         id: 'launch_rental',
         label: 'Launch rental',
         surface: { cash: -50, novelty: 8, social: 6 },
-        recurring: { cash: 8, hidden: { carbon: -20 } },
+        recurring: { cash: 8, hidden: { carbon: -20 }, label: 'Rental subscription' },
         reaction: 'Month two: the same coat, its third renter, still perfect.',
+        followUp: {
+          chance: 0.55,
+          from: 'Board WhatsApp',
+          preview: 'Dilution?',
+          body: 'Investors asking if rental cannibalises wholesale. Kill the pilot or double down?',
+          options: [
+            {
+              id: 'double_rental',
+              label: 'Double down',
+              surface: { cash: -12, social: 3, novelty: 4 },
+              reaction: 'The pilot expands. Wholesale grumbles. Customers renew.',
+            },
+            {
+              id: 'shrink_rental',
+              label: 'Keep it small',
+              surface: { social: 1 },
+              reaction: 'You protect the board and the idea. Both notice.',
+            },
+          ],
+        },
       },
       {
         id: 'kill_it',
@@ -812,9 +1041,29 @@ export const CARDS: Card[] = [
         id: 'fund_remediation',
         label: 'Stay and fund remediation over two years',
         surface: { cash: -45, social: 6 },
-        recurring: { cash: -4, turns: 6 },
+        recurring: { cash: -4, turns: 6, label: 'Mill remediation' },
         fuses: ['toxic_discharge'],
         reaction: 'You commit publicly. Your name is on the mill gate now, for better or worse.',
+        followUp: {
+          chance: 0.6,
+          from: 'Mill owner',
+          preview: 'Press at the gate',
+          body: 'Local paper wants a quote with {brand} on the remediation. Do we stand together?',
+          options: [
+            {
+              id: 'stand_together',
+              label: 'Stand together',
+              surface: { heat: 3, social: 2 },
+              reaction: 'Your name is on the gate and in the paper. Both.',
+            },
+            {
+              id: 'quiet_funding',
+              label: 'Fund quietly',
+              surface: { social: -1 },
+              reaction: 'The money still flows. The story does not include you.',
+            },
+          ],
+        },
       },
       {
         id: 'taper_quietly',
@@ -904,9 +1153,29 @@ export const CARDS: Card[] = [
         id: 'take_it',
         label: 'Take it',
         surface: { cash: 400, social: 1 },
-        recurring: { hidden: { waste: -4 } },
+        recurring: { hidden: { waste: -4 }, label: 'Conglomerate circular rails' },
         fuses: ['greenwashing_claim'],
         reaction: 'Circular rails appear in 900 stores. Your name is nowhere on them.',
+        followUp: {
+          chance: 0.55,
+          from: 'Youth ambassadors group chat',
+          preview: 'Is this still us?',
+          body: 'People are asking if {brand} sold out. Do we say anything, or stay quiet?',
+          options: [
+            {
+              id: 'stay_quiet_money',
+              label: 'Stay quiet',
+              surface: { social: -2 },
+              reaction: 'The chat goes cold for a week.',
+            },
+            {
+              id: 'explain_trade',
+              label: 'Explain the trade',
+              surface: { social: 1, heat: 2 },
+              reaction: 'Some leave. Some stay. Honesty splits the room cleanly.',
+            },
+          ],
+        },
       },
       {
         id: 'decline_conglomerate',
@@ -940,6 +1209,28 @@ export const CARDS: Card[] = [
         surface: {},
         fuses: ['worker_grievance', 'worker_grievance'],
         whisper: 'Another month. The building is still the building.',
+        followUp: {
+          chance: 0.7,
+          from: 'Unknown number',
+          preview: 'Still one exit',
+          body: 'She found work. The building has not changed. Act now?',
+          options: [
+            {
+              id: 'act_late',
+              label: 'Act now',
+              surface: { cash: -25, social: 2 },
+              clearsFuses: ['worker_grievance'],
+              reaction: 'Late is better than never. Barely.',
+            },
+            {
+              id: 'still_wait',
+              label: 'Wait another month',
+              surface: { social: -2 },
+              fuses: ['worker_grievance'],
+              reaction: 'Another month. The probability is still not zero.',
+            },
+          ],
+        },
       },
       {
         id: 'payroll_first',
@@ -1057,6 +1348,28 @@ export const CARDS: Card[] = [
         label: '"We are reviewing our suppliers"',
         surface: { cash: -8, heat: -5, social: -2 },
         fuses: ['greenwashing_claim'],
+        followUp: {
+          chance: 0.85,
+          from: 'Breaking — local news',
+          preview: 'Lab confirms your crimson',
+          body: 'Spectrometry matches your signature dye. On air in twenty minutes. Statement?',
+          options: [
+            {
+              id: 'deny_link',
+              label: 'Deny the link',
+              surface: { heat: -8, social: -3 },
+              fuses: ['greenwashing_claim'],
+              reaction: 'The denial ages poorly by morning.',
+            },
+            {
+              id: 'own_river',
+              label: 'Own it on air',
+              surface: { cash: -12, social: 3, heat: -2 },
+              clearsFuses: ['toxic_discharge'],
+              reaction: 'You say the word pollution on live television. It sticks.',
+            },
+          ],
+        },
       },
       {
         id: 'switch_quietly',

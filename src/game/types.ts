@@ -2,6 +2,8 @@
 // Card content comes from docs/fashion-virus-30-cards.md — the engine
 // fires on tags, so cards can be swapped freely without touching systems.
 
+import type { AvatarId, PaletteId, ThesisId } from './brand'
+
 /** The hidden ledger, in real units. All values start at 0 and accumulate. */
 export interface Ledger {
   /** million litres polluted or drawn */
@@ -34,6 +36,25 @@ export interface SurfaceEffects {
   social?: number
 }
 
+/** A quick phone-style follow-up after a choice. */
+export interface FollowUpOption {
+  id: string
+  label: string
+  surface?: SurfaceEffects
+  fuses?: string[]
+  clearsFuses?: string[]
+  reaction?: string
+}
+
+export interface FollowUp {
+  /** 0–1 chance this fires after the choice */
+  chance: number
+  from: string
+  preview: string
+  body: string
+  options: FollowUpOption[]
+}
+
 export interface Choice {
   id: string
   label: string
@@ -50,7 +71,7 @@ export interface Choice {
   reaction?: string
   /** Ongoing per-turn effect (export contract, rental line). Negatives heal.
    *  `turns` limits duration; omit for the rest of the run. */
-  recurring?: { cash?: number; hidden?: Partial<Ledger>; turns?: number }
+  recurring?: { cash?: number; hidden?: Partial<Ledger>; turns?: number; label?: string }
   /** Permanent change to novelty decay (the bank covenant ratchet). */
   decayDelta?: number
   /** World-states: choices that change the map, not just the numbers.
@@ -58,6 +79,10 @@ export interface Choice {
   worldStates?: string[]
   /** Special engine handling. */
   kind?: 'inspect' | 'audit' | 'documentary_grant' | 'documentary_decline'
+  /** Optional phone-style interrupt after this choice. */
+  followUp?: FollowUp
+  /** Soft-lock when social is below this — nobody will vouch. */
+  requiresSocial?: number
 }
 
 export interface Card {
@@ -114,14 +139,40 @@ export interface Ally {
   act2Line: string
 }
 
-export type Phase = 'start' | 'act1' | 'hinge' | 'act2' | 'end'
+export type Phase = 'start' | 'setup' | 'act1' | 'hinge' | 'act2' | 'end'
+
+export interface BrandIdentity {
+  name: string
+  paletteId: PaletteId
+  avatarId: AvatarId
+  thesis: ThesisId
+}
+
+export interface PendingPing {
+  from: string
+  preview: string
+  body: string
+  options: FollowUpOption[]
+  /** Mild cost if the player ignores. */
+  ignore: SurfaceEffects
+}
 
 export interface Act2State {
-  turn: number // 1..3
+  turn: number // 1..5
   budget: number // £k — what survived the crash
   repairsChosen: string[]
   healed: Ledger
 }
+
+export interface SeasonSnapshot {
+  turn: number
+  cash: number
+  heat: number
+  novelty: number
+  social: number
+}
+
+export type DeskActionId = 'repair_clinic' | 'teaser' | 'overtime' | 'sit_tight'
 
 export interface GameState {
   phase: Phase
@@ -145,7 +196,7 @@ export interface GameState {
   /** The real audit was commissioned: the player can see their fuses. */
   fusesRevealed: boolean
   /** Ongoing per-turn effects. */
-  recurring: { cash?: number; hidden?: Partial<Ledger>; turns?: number }[]
+  recurring: { cash?: number; hidden?: Partial<Ledger>; turns?: number; label?: string }[]
   /** Choices that changed the map. Act 2 shows these. */
   worldStates: string[]
   deck: Record<1 | 2 | 3, string[]>
@@ -160,4 +211,14 @@ export interface GameState {
   firedCrises: string[]
   folded: boolean
   act2: Act2State
+  /** Player's label identity — null until Brand Setup completes. */
+  brand: BrandIdentity | null
+  /** Phone-style interrupt waiting between seasons. */
+  pendingPing: PendingPing | null
+  /** Last-N season snapshots for sparklines. */
+  history: SeasonSnapshot[]
+  /** Optional desk action already taken this season. */
+  deskActionUsed: boolean
+  /** How many teaser drops this run — overuse burns social. */
+  teaserCount: number
 }

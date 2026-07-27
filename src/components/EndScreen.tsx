@@ -26,6 +26,7 @@ export function EndScreen({ state, onRestart }: Props) {
     <main className={`endscreen end-${end.register} ${end.held ? 'end-held' : ''}`}>
       <div className="end-backdrop" style={{ backgroundImage: `url(${END_ART[end.register]})` }} />
       <div className="end-content">
+      {state.brand && <p className="eyebrow end-brand">{state.brand.name}</p>}
       <h1 className="end-headline">{end.headline}</h1>
       <p className="end-sub">{end.sub}</p>
 

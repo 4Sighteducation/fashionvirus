@@ -25,6 +25,7 @@ export function Hinge({ state, onEnterAct2 }: Props) {
           <br />
           OF THE YEAR
         </h1>
+        {state.brand && <p className="fanfare-brand">{state.brand.name}</p>}
         <p className="fanfare-line">Valuation: {money(valuation)}</p>
         <p className="fanfare-line">Sixteen seasons. Four continents. One name.</p>
         <p className="fanfare-line fanfare-ovation">A standing ovation.</p>
