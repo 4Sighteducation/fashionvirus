@@ -14,6 +14,7 @@ import {
 import { LEDGER_LABELS, money } from '../game/format'
 import type { DeskActionId, GameState } from '../game/types'
 import { CardModal } from './CardModal'
+import { InfoTip } from './InfoTip'
 import { Intro, STAT_HELP } from './Intro'
 import { PhonePing } from './PhonePing'
 
@@ -99,6 +100,8 @@ function Gauge({
   sub,
   variant,
   deltaFormat,
+  info,
+  infoAlign,
 }: {
   label: string
   value: string | number
@@ -107,12 +110,21 @@ function Gauge({
   sub?: string
   variant?: string
   deltaFormat?: (n: number) => string
+  info?: React.ReactNode
+  infoAlign?: 'start' | 'end'
 }) {
   const bandClass =
     band === undefined ? '' : band < 25 ? 'band-low' : band > 75 ? 'band-hot' : 'band-stable'
   return (
     <div className={`gauge ${variant ?? ''} ${bandClass}`}>
-      <span className="eyebrow tile-label">{label}</span>
+      <span className="eyebrow tile-label">
+        {label}
+        {info && (
+          <InfoTip title={label} align={infoAlign}>
+            {info}
+          </InfoTip>
+        )}
+      </span>
       <span className="tile-value">
         {value}
         <Delta value={delta} format={deltaFormat} />
@@ -231,6 +243,7 @@ export function Act1({
             delta={deltas.cash}
             variant={state.cash < 0 ? 'tile-negative' : ''}
             deltaFormat={(n) => `${n > 0 ? '+' : '−'}£${Math.abs(n)}k`}
+            info="Your money, in thousands. Every decision costs or earns it. Below zero, the bank starts making your decisions for you."
             sub={
               runway !== null
                 ? `~${runway} season${runway === 1 ? '' : 's'} runway`
@@ -245,6 +258,7 @@ export function Act1({
             delta={deltas.heat}
             band={state.heat}
             variant="tile-heat"
+            info="How much the industry talks about you (0–100). Heat opens doors, lifts sales — and attracts journalists. Cold means nobody's looking. Hot means everybody is."
             sub={state.heat > 75 ? 'hot' : state.heat < 25 ? 'cold' : 'stable'}
           />
           <Gauge
@@ -253,18 +267,35 @@ export function Act1({
             delta={deltas.novelty}
             band={state.novelty}
             variant="tile-novelty"
+            info={`The market's hunger for your next drop (0–100). It falls ${state.noveltyDecay} every season no matter what you do. If it hits zero, a quiet season costs you cash and heat. This is the treadmill.`}
             sub={`decays −${state.noveltyDecay}/season`}
           />
           <div className="gauge gauge-pressure">
-            <span className="eyebrow tile-label">Pressure</span>
+            <span className="eyebrow tile-label">
+              Pressure
+              <InfoTip title="Pressure" align="end">
+                A gut feeling, not a number. It rises as you make choices that could come back on you —
+                and it never says which ones, or when. Quiet → Uneasy → Volatile.
+              </InfoTip>
+            </span>
             <span className={`tile-value pressure-${pressure}`}>{pressureLabel(pressure)}</span>
             <span className="tile-sub">what you can feel</span>
           </div>
         </div>
         <div className="pulse-meta">
-          <span className="eyebrow act1-stage">{STAGE_LABELS[stage]}</span>
+          <span className="eyebrow act1-stage">
+            {STAGE_LABELS[stage]}
+            <InfoTip title="Your stage" align="end">
+              How big the label is. Bedroom label → high street → global. The decisions grow with
+              you — and their consequences land further from your desk.
+            </InfoTip>
+          </span>
           <span className="eyebrow act1-season">
             Season {Math.min(state.turn, ACT1_TURNS)} / {ACT1_TURNS}
+            <InfoTip title="Seasons" align="end">
+              One decision per season, sixteen seasons — about five years of running the label.
+              At season sixteen: the Industry Awards.
+            </InfoTip>
           </span>
         </div>
       </header>
@@ -272,12 +303,23 @@ export function Act1({
       <div className="desk-body">
         <aside className="desk-standing">
           <div className="standing-head">
-            <span className="eyebrow">Social capital</span>
+            <span className="eyebrow">
+              Social capital
+              <InfoTip title="Social capital">
+                Trust — workers, customers, community (0–100). It grows when you treat people
+                well and shrinks when you don't. It can't be bought, and it pays out in ways
+                cash can't: at {SOCIAL_BUFFER_AT} it cushions quiet seasons, at {CRISIS_SHIELD_AT}{' '}
+                it can absorb one crisis, and as it climbs, real people join your side.
+              </InfoTip>
+            </span>
             <span className="standing-value">
               {Math.round(state.social)}
               <Delta value={deltas.social} />
+              <span className="standing-spark">
+                <Sparkline values={socialHistory} />
+              </span>
             </span>
-            <Sparkline values={socialHistory} />
+            <span className="tile-sub">trust in your name — slow to earn</span>
           </div>
           <div className="social-track">
             <div
@@ -293,17 +335,28 @@ export function Act1({
               <span
                 key={a.id}
                 className={`social-milestone ${state.social >= a.threshold ? 'ms-hit' : ''} ${state.allies.includes(a.id) ? 'ms-ally' : ''}`}
-                style={{ bottom: `${a.threshold}%` }}
-                title={`${a.name} @ ${a.threshold}`}
+                style={{ '--ms': `${a.threshold}%` } as React.CSSProperties}
               />
             ))}
+          </div>
+          <div className="ally-head">
+            <span className="eyebrow">
+              Allies
+              <InfoTip title="Allies">
+                Real people who join you at trust milestones — {ALLIES.map((a) => a.threshold).join(', ')}.
+                They arrive on their own when your social capital reaches their level, and they
+                stay with you for whatever comes after the awards.
+              </InfoTip>
+            </span>
           </div>
           <ul className="ally-roster">
             {ALLIES.map((a) => {
               const joined = state.allies.includes(a.id)
               return (
                 <li key={a.id} className={joined ? 'ally-filled' : 'ally-empty'}>
-                  <span className="eyebrow">{joined ? allyById(a.id).name : `— ${a.threshold}`}</span>
+                  <span className="eyebrow">
+                    {joined ? allyById(a.id).name : `Joins at ${a.threshold} trust`}
+                  </span>
                   <span>{joined ? 'with you' : 'not yet'}</span>
                 </li>
               )
@@ -311,15 +364,40 @@ export function Act1({
           </ul>
           <div className="standing-chips">
             {state.social >= SOCIAL_BUFFER_AT && (
-              <span className="chip-status chip-on">Novelty buffer active</span>
+              <span className="chip-status chip-on">
+                Novelty buffer active
+                <InfoTip title="Novelty buffer">
+                  Social capital {SOCIAL_BUFFER_AT}+: when novelty runs dry, your community
+                  carries you — a quiet season costs half as much cash and heat.
+                </InfoTip>
+              </span>
             )}
             {state.social >= CRISIS_SHIELD_AT && !state.crisisShieldUsed && (
-              <span className="chip-status chip-on">Crisis shield ready</span>
+              <span className="chip-status chip-on">
+                Crisis shield ready
+                <InfoTip title="Crisis shield">
+                  Social capital {CRISIS_SHIELD_AT}+: the people who trust you will absorb the
+                  worst of one crisis. Once per run.
+                </InfoTip>
+              </span>
             )}
-            {state.crisisShieldUsed && <span className="chip-status">Crisis shield spent</span>}
+            {state.crisisShieldUsed && (
+              <span className="chip-status">
+                Crisis shield spent
+                <InfoTip title="Crisis shield">
+                  Your community absorbed one crisis for you. That only happens once.
+                </InfoTip>
+              </span>
+            )}
           </div>
           <div className="novelty-mini">
-            <span className="eyebrow">Novelty trend</span>
+            <span className="eyebrow">
+              Novelty trend
+              <InfoTip title="Novelty trend">
+                Your novelty over recent seasons — the treadmill you're running on. Falling line
+                means the market is losing interest.
+              </InfoTip>
+            </span>
             <Sparkline values={noveltyHistory} />
           </div>
         </aside>

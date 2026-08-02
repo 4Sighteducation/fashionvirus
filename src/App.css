@@ -1752,6 +1752,7 @@ button {
 .social-milestone {
   position: absolute;
   left: -3px;
+  bottom: var(--ms, 0%);
   width: 20px;
   height: 2px;
   background: #ccc;
@@ -1916,6 +1917,104 @@ button {
   color: var(--brand-accent, #9a8c66);
 }
 
+/* ============ info tips ============ */
+
+.infotip {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+.infotip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--brand-ink, #111) 35%, transparent);
+  border-radius: 50%;
+  background: none;
+  color: color-mix(in srgb, var(--brand-ink, #111) 55%, transparent);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.62rem;
+  line-height: 1;
+  cursor: help;
+  flex: none;
+}
+.infotip-btn:hover,
+.infotip-open .infotip-btn {
+  border-color: var(--brand-accent, #9a8c66);
+  color: var(--brand-accent, #9a8c66);
+}
+.infotip-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -8px;
+  z-index: 60;
+  display: none;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: min(250px, 74vw);
+  padding: 0.7rem 0.8rem 0.75rem;
+  background: #fffefb;
+  border: 1px solid color-mix(in srgb, var(--brand-ink, #111) 20%, transparent);
+  box-shadow: 0 10px 30px rgba(20, 18, 10, 0.16);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: default;
+}
+.infotip-pop.infotip-align-end {
+  left: auto;
+  right: -8px;
+}
+.infotip-open .infotip-pop {
+  display: flex;
+}
+@media (hover: hover) {
+  .infotip:hover .infotip-pop {
+    display: flex;
+  }
+}
+.infotip-title {
+  font-size: 0.55rem;
+  color: var(--brand-accent, #9a8c66);
+}
+.infotip-body {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #3a3a34;
+}
+
+.tile-label,
+.ally-head .eyebrow,
+.standing-head > .eyebrow,
+.novelty-mini > .eyebrow {
+  display: inline-flex;
+  align-items: center;
+}
+.standing-spark {
+  margin-left: 0.2rem;
+}
+.ally-head {
+  border-top: 1px solid #eeeee8;
+  padding-top: 0.55rem;
+}
+.chip-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chip-status .infotip-btn {
+  border-color: currentColor;
+  color: inherit;
+  opacity: 0.7;
+}
+
 /* ============ phone ping ============ */
 
 .phone-ping-backdrop {
@@ -2030,6 +2129,18 @@ button {
   .social-fill {
     height: 100% !important;
     width: var(--social-w, 0%);
+  }
+  .social-milestone {
+    left: var(--ms, 0%);
+    bottom: -3px;
+    width: 2px;
+    height: 18px;
+    transform: translateX(-50%);
+  }
+  .ally-roster {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
   }
   .desk-action-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
