@@ -102,6 +102,7 @@ export function newGame(preservedBrand?: BrandIdentity | null): GameState {
     history: [{ turn: 1, cash: STARTING_CASH, heat: 10, novelty: 50, social: STARTING_SOCIAL }],
     deskActionUsed: false,
     teaserCount: 0,
+    grantUsed: false,
   }
 }
 
@@ -169,10 +170,12 @@ function thesisScale(state: GameState, surface: SurfaceEffects): SurfaceEffects 
     if (out.social && out.social > 0) out.social = Math.max(1, Math.round(out.social * 0.6))
   } else if (thesis === 'integrity') {
     if (out.social && out.social > 0) out.social = Math.round(out.social * 1.4)
-    if (out.cash && out.cash > 0) out.cash = Math.max(1, Math.round(out.cash * 0.85))
-    if (out.cash && out.cash < 0) out.cash = Math.round(out.cash * 1.1)
+    if (out.cash && out.cash > 0) out.cash = Math.max(1, Math.round(out.cash * 0.9))
   } else if (thesis === 'craft') {
     if (out.heat && out.heat > 0) out.heat = Math.max(1, Math.round(out.heat * 0.7))
+  } else if (thesis === 'social_enterprise') {
+    if (out.social && out.social > 0) out.social = Math.round(out.social * 1.4)
+    if (out.cash && out.cash > 0) out.cash = Math.max(1, Math.round(out.cash * 0.85))
   }
   return out
 }
@@ -234,11 +237,20 @@ function tick(state: GameState): void {
     if (r.turns !== undefined) r.turns -= 1
   }
   state.recurring = state.recurring.filter((r) => r.turns === undefined || r.turns > 0)
-  state.novelty = Math.max(0, state.novelty - state.noveltyDecay)
+
+  // Steady trade: trust converts to quiet repeat custom.
+  // "Sometimes the decent thing pays better — it's just harder to find."
+  state.cash += Math.floor(state.social / 20)
+
+  // Word of mouth: a trusted label stays part of the conversation without ads.
+  const decay = state.social >= 40 ? Math.max(2, state.noveltyDecay - 2) : state.noveltyDecay
+  state.novelty = Math.max(0, state.novelty - decay)
   if (state.novelty <= 0) {
-    const buffered = state.social >= SOCIAL_BUFFER_AT
-    state.cash -= buffered ? 4 : 8
-    state.heat = Math.max(0, state.heat - (buffered ? 2 : 4))
+    // A quiet season hurts less the more people trust the label.
+    const cashHit = state.social >= SOCIAL_BUFFER_AT ? 3 : state.social >= 30 ? 5 : 8
+    const heatHit = state.social >= SOCIAL_BUFFER_AT ? 2 : state.social >= 30 ? 3 : 4
+    state.cash -= cashHit
+    state.heat = Math.max(0, state.heat - heatHit)
   }
 }
 
@@ -278,6 +290,7 @@ export function reduce(prev: GameState, action: Action): GameState {
   if (state.teaserCount === undefined) state.teaserCount = 0
   if (state.pendingPing === undefined) state.pendingPing = null
   if (state.brand === undefined) state.brand = null
+  if (state.grantUsed === undefined) state.grantUsed = false
 
   switch (action.type) {
     case 'start': {
@@ -292,6 +305,11 @@ export function reduce(prev: GameState, action: Action): GameState {
       if (action.brand.thesis === 'growth') state.noveltyDecay = BASE_NOVELTY_DECAY - 2
       if (action.brand.thesis === 'integrity') state.noveltyDecay = BASE_NOVELTY_DECAY
       if (action.brand.thesis === 'craft') state.noveltyDecay = BASE_NOVELTY_DECAY + 1
+      if (action.brand.thesis === 'social_enterprise') {
+        // Mission-led from day one: real community trust, slightly less capital.
+        state.social = Math.min(100, state.social + 10)
+        state.cash -= 3
+      }
       state.phase = 'act1'
       return state
     }
@@ -402,6 +420,22 @@ export function reduce(prev: GameState, action: Action): GameState {
       }
 
       tick(state)
+
+      // The community catches a social enterprise once — and only once.
+      if (
+        state.cash < 0 &&
+        !state.grantUsed &&
+        state.brand?.thesis === 'social_enterprise'
+      ) {
+        state.grantUsed = true
+        state.cash += 18
+        state.reaction = [
+          state.reaction,
+          'The community development fund wires an emergency grant, unasked. There will not be a second one.',
+        ]
+          .filter(Boolean)
+          .join(' ')
+      }
 
       if (state.cash <= -40) {
         state.folded = true

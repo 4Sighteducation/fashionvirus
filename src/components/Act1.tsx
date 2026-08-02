@@ -307,9 +307,11 @@ export function Act1({
               Social capital
               <InfoTip title="Social capital">
                 Trust — workers, customers, community (0–100). It grows when you treat people
-                well and shrinks when you don't. It can't be bought, and it pays out in ways
-                cash can't: at {SOCIAL_BUFFER_AT} it cushions quiet seasons, at {CRISIS_SHIELD_AT}{' '}
-                it can absorb one crisis, and as it climbs, real people join your side.
+                well and shrinks when you don't. It can't be bought, and it quietly pays:
+                every season, trust brings repeat custom (about £1k per 20), at 40 word of
+                mouth slows the novelty treadmill, at {SOCIAL_BUFFER_AT} it cushions quiet
+                seasons, at {CRISIS_SHIELD_AT} it can absorb one crisis — and as it climbs,
+                real people join your side.
               </InfoTip>
             </span>
             <span className="standing-value">
@@ -368,7 +370,7 @@ export function Act1({
                 Novelty buffer active
                 <InfoTip title="Novelty buffer">
                   Social capital {SOCIAL_BUFFER_AT}+: when novelty runs dry, your community
-                  carries you — a quiet season costs half as much cash and heat.
+                  carries you — a quiet season costs a fraction of what it would otherwise.
                 </InfoTip>
               </span>
             )}

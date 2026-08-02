@@ -22,6 +22,7 @@ function migrateState(raw: GameState): GameState {
     history: raw.history ?? [],
     deskActionUsed: raw.deskActionUsed ?? false,
     teaserCount: raw.teaserCount ?? 0,
+    grantUsed: raw.grantUsed ?? false,
   }
 }
 

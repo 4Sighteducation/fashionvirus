@@ -221,4 +221,6 @@ export interface GameState {
   deskActionUsed: boolean
   /** How many teaser drops this run — overuse burns social. */
   teaserCount: number
+  /** Social enterprise only: the one-time community emergency grant was used. */
+  grantUsed: boolean
 }

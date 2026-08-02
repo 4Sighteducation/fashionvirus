@@ -2,7 +2,7 @@
 
 export type PaletteId = 'ink_bone' | 'signal_red' | 'warehouse_green' | 'midnight_gloss'
 export type AvatarId = 'monogram' | 'needle' | 'bolt' | 'circle' | 'slash' | 'seal'
-export type ThesisId = 'growth' | 'integrity' | 'craft'
+export type ThesisId = 'growth' | 'integrity' | 'craft' | 'social_enterprise'
 
 export interface BrandPalette {
   id: PaletteId
@@ -85,6 +85,11 @@ export const THESES: BrandThesis[] = [
     id: 'craft',
     name: 'Craft',
     blurb: 'Make it well. Heat rises slower — Act 2 repair lands with more meaning.',
+  },
+  {
+    id: 'social_enterprise',
+    name: 'Social enterprise',
+    blurb: 'Mission locked, profits capped. You start with real community trust — and the community catches you, once, if you fall.',
   },
 ]
 

@@ -81,6 +81,13 @@ export const CARDS: Card[] = [
         hidden: { carbon: 20 },
       },
       {
+        id: 'reclaimed',
+        label: 'Reclaimed offcuts from the furniture trade',
+        surface: { cash: -1, heat: 5, social: 2, novelty: 4 },
+        hidden: { carbon: 5 },
+        reaction: 'Every piece is slightly different. Customers start asking for "the one-offs".',
+      },
+      {
         id: 'synthetic',
         label: 'The synthetic',
         surface: { cash: 9, heat: -4 },
@@ -242,6 +249,8 @@ export const CARDS: Card[] = [
         label: 'Stay local, small-batch',
         surface: { cash: -1, heat: 5, social: 5 },
         hidden: { carbon: 15 },
+        recurring: { cash: 2, label: 'Local wholesale accounts' },
+        reaction: 'Three local shops take the line on standing order. Small, steady, yours.',
       },
     ],
   },
@@ -985,7 +994,7 @@ export const CARDS: Card[] = [
       {
         id: 'launch_rental',
         label: 'Launch rental',
-        surface: { cash: -50, novelty: 8, social: 6 },
+        surface: { cash: -30, novelty: 8, social: 6 },
         recurring: { cash: 8, hidden: { carbon: -20 }, label: 'Rental subscription' },
         reaction: 'Month two: the same coat, its third renter, still perfect.',
         followUp: {

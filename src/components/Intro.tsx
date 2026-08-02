@@ -17,7 +17,7 @@ export const STAT_HELP: { label: string; text: string }[] = [
   },
   {
     label: 'SOCIAL CAPITAL',
-    text: 'Trust — workers, customers, community. Slow to earn, impossible to buy, priceless later. High trust cushions a quiet season and can absorb one crisis.',
+    text: 'Trust — workers, customers, community. Slow to earn, impossible to buy, and it quietly pays: every season, trust brings repeat custom (about £1k per 20 trust), keeps word of mouth going when novelty fades, cushions a quiet season, and can absorb one crisis.',
   },
 ]
 
