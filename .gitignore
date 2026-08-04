@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Fashion Inc. staging area — destined for its own repository.
+# 4.2 GB of Synty POLYGON packs live here; committing them to this
+# repo's history would be effectively irreversible. Guard rail only:
+# see docs/fashion-inc/phase-0/REPOSITORY_RECOMMENDATION.md
+Fashion_Inc/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
