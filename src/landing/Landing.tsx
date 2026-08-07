@@ -194,12 +194,43 @@ export function Landing() {
       <section className="section" ref={ideasRef}>
         <p className="eyebrow section-kicker">The ideas</p>
         <h2 className="section-title">Built on ideas worth taking seriously.</h2>
+
+        <div className="karen">
+          <img
+            className="karen-photo"
+            src="/assets/people/karen-dennis.jpg"
+            alt="Dr Karen Dennis"
+          />
+          <div className="karen-bio">
+            <p className="eyebrow karen-kicker">The research</p>
+            <h3 className="karen-name">Dr Karen Dennis</h3>
+            <p className="karen-role">Founder of Ketchup Clothes &mdash; known to most as Karen Ketchup</p>
+            <p>
+              Fashion Virus is grounded in the research and lived practice of Dr Karen Dennis.
+              Trained at the London College of Fashion, with a textile design degree from Leeds
+              University, she spent six years researching the impact of textile and clothing
+              production on rural communities across Zambia, India and Nepal &mdash; and she has
+              been making clothes from reclaimed materials since 1990, when a project with Oxfam
+              first put discarded textiles in her hands.
+            </p>
+            <p>
+              Today she runs <strong>Ketchup Clothes</strong> in Clacton-on-Sea: part studio,
+              part shop, part community hub &mdash; repairs and alterations, sewing courses
+              through the Ketchup Academy, and streetwear handcrafted from materials that were on
+              their way to landfill. It is, in miniature, the world this game argues for &mdash;
+              repair-first, local, human-scale &mdash; running as a real business. Every dilemma
+              card you&rsquo;re dealt draws on her research.
+            </p>
+            <a className="karen-link" href="https://ketchupclothes.com" target="_blank" rel="noreferrer">
+              Visit Ketchup Clothes &rarr;
+            </a>
+          </div>
+        </div>
+
         <p className="section-lede">
-          Fashion Virus grew out of Karen&rsquo;s research &mdash; a set of references that
-          aren&rsquo;t background reading but design instructions. Each one solves a live problem
-          in the game, and together they&rsquo;re what make it a serious work rather than an
-          eco-game. Karen&rsquo;s research is also the card corpus itself: every dilemma you&rsquo;re
-          dealt is grounded in how the industry actually works.
+          Her references aren&rsquo;t background reading but design instructions. Each one solves
+          a live problem in the game, and together they&rsquo;re what make it a serious work
+          rather than an eco-game.
         </p>
         <div className="ideas">
           {IDEAS.map((idea) => (
@@ -215,6 +246,76 @@ export function Landing() {
           And an ancestor: <strong>World Factory</strong> (METIS / Zo&euml; Svendsen &amp; Simon
           Daw, 2015), the card-based game-theatre work where audiences ran a Chinese clothing
           factory. We play the brand &mdash; World Factory&rsquo;s off-screen antagonist.
+        </p>
+      </section>
+
+      {/* ============ ketchup clothes ============ */}
+      <section className="section">
+        <p className="eyebrow section-kicker">Remade in Clacton</p>
+        <h2 className="section-title">Ketchup Clothes &mdash; the game&rsquo;s argument, on a real high street.</h2>
+        <p className="section-lede">
+          Welcome to Ketchup Clothes &mdash; Clacton&rsquo;s leading and most sustainable fashion
+          shop, delivering on all your fashion needs. From alterations and wardrobe surgeries to
+          &ldquo;new&rdquo; pieces made in store, Ketchup can tailor to you &mdash; quite
+          literally.
+        </p>
+        <div className="ketchup-grid">
+          <article className="ketchup-card">
+            <h3>The Ketchup ethos</h3>
+            <p>
+              Simple to grasp, yet not commonly applied: tackle fashion waste at the root. By
+              stopping consumption we can take a better look at what garments already exist in
+              the fashion chain and reinsert them back into use &mdash; removing the
+              &ldquo;discard&rdquo; step and linking it back to &ldquo;make&rdquo;: a circular
+              fashion economy.
+            </p>
+            <p>
+              Even if a piece of clothing isn&rsquo;t to your taste, there already exists a world
+              of opportunity to transform it into something that is. And if you can&rsquo;t think
+              of a way to reuse it yourself? That&rsquo;s the purpose of places like Ketchup
+              &mdash; expertly crafting upcycled and pre-loved garments for decades. After all:
+              one man&rsquo;s trash is another man&rsquo;s treasure.
+            </p>
+          </article>
+          <article className="ketchup-card">
+            <h3>What&rsquo;s in store</h3>
+            <p>
+              The Ketchup store is a treasure chest of upcycled wonders. <em>Fabric Skins</em>
+              &nbsp;&mdash; Karen&rsquo;s re-cut t-shirts &mdash; give a new lease of life to
+              once-discarded tees, now ready to perform as reclaimed showpieces. Festival outfits
+              add a fluorescent flourish to the racks, born from items that survived their first
+              festival but are by no means done with their party days. Leather and denim jackets
+              merge and mingle into individual outerwear pieces.
+            </p>
+            <p>
+              And if the artisanal sustainable look is not your aesthetic, Ketchup is no stranger
+              to a commercial range too: shirts, skirts, dresses and more await a new loving
+              home. Pop in store and explore Clacton&rsquo;s very own cave of wonders.
+            </p>
+          </article>
+          <article className="ketchup-card">
+            <h3>Get hands on</h3>
+            <p>
+              Ketchup offers interactive ways to reconnect you to your wardrobe. Unique
+              <em> Wardrobe Surgeries</em> let you feel like you&rsquo;ve obtained a whole new
+              closet without discarding or replacing a thing &mdash; more sustainable, and more
+              cost effective. <em>Make &amp; Take parties</em> are a creative outlet for you and
+              friends to collaborate, exchange garments and create new, personalised pieces.
+            </p>
+            <p>
+              And if you&rsquo;re keen to become your own fashion designer, embark on
+              Ketchup&rsquo;s <em>Training and Courses</em>, guided by fashion expert Karen, from
+              beginners through to advanced &mdash; receive pre-made patterns or draft your own,
+              and assemble a one-of-a-kind garment just for you.
+            </p>
+          </article>
+        </div>
+        <p className="ketchup-close">
+          We look forward to welcoming you into the sustainable, innovative world of Ketchup
+          Clothes.{' '}
+          <a className="karen-link" href="https://ketchupclothes.com" target="_blank" rel="noreferrer">
+            ketchupclothes.com &rarr;
+          </a>
         </p>
       </section>
 
@@ -254,6 +355,11 @@ export function Landing() {
       <footer className="footer">
         <p className="footer-brand">Fashion Virus / Wasteworld</p>
         <p className="footer-line">Build a fashion empire. Face the fallout.</p>
+        <p className="footer-links">
+          <a href="https://ketchupclothes.com" target="_blank" rel="noreferrer">Ketchup Clothes</a>
+          <span aria-hidden="true">&middot;</span>
+          <a href="https://thecarboncloset.com" target="_blank" rel="noreferrer">The Carbon Closet</a>
+        </p>
         <p className="footer-small">
           Anonymous decision logging for research &middot; every in-game figure is sourced and
           audited

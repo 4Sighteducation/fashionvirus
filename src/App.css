@@ -664,6 +664,148 @@ button {
   opacity: 0.5;
   margin-top: 1.2rem;
 }
+
+/* ============ after the game — the follow-up ============ */
+/* A paper card: readable on every ending's backdrop, light or dark. */
+
+.aftergame {
+  width: min(640px, 100%);
+  background: #fdfdfb;
+  color: #111;
+  text-align: left;
+  padding: 2rem clamp(1.2rem, 4vw, 2.2rem);
+  margin-top: 1.6rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+.aftergame-kicker {
+  font-size: 0.65rem;
+  color: #999;
+  margin: 0 0 0.9rem;
+}
+.aftergame-intro {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #333;
+  margin: 0 0 1.6rem;
+}
+.aftergame-q {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.4rem;
+}
+.aftergame-q legend {
+  font-family: var(--font-sans);
+  font-stretch: 62.5%;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  padding: 0;
+  margin-bottom: 0.6rem;
+}
+.aftergame-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.aftergame-options button {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.5rem 0.9rem;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.aftergame-options button:hover {
+  border-color: #111;
+}
+.aftergame-options button.selected {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+.aftergame-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+.aftergame-skip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #888;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+}
+.aftergame-skip:hover {
+  color: #111;
+}
+.aftergame-note {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #aaa;
+  margin: 1.4rem 0 0;
+}
+.aftergame-ideas {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.aftergame-ideas li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.aftergame-ideas strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.aftergame-ideas span {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #444;
+}
+.aftergame-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  border-top: 1px solid #ddd;
+  padding-top: 1.4rem;
+}
+.aftergame-links a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: inherit;
+}
+.aftergame-links a:hover {
+  border-color: #111;
+}
+.aftergame-links strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+}
+.aftergame-links span {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: #555;
+}
+@media (max-width: 560px) {
+  .aftergame-links {
+    grid-template-columns: 1fr;
+  }
+}
 .end-clean .btn-primary,
 .end-folded .btn-primary {
   background: #111;

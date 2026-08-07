@@ -2,6 +2,7 @@ import { WORLD_STATES, allyById, damageScore, ending } from '../game/act2'
 import { ACT1_TURNS } from '../game/engine'
 import { realWorldEquivalents } from '../game/format'
 import type { GameState } from '../game/types'
+import { AfterGame } from './AfterGame'
 
 interface Props {
   state: GameState
@@ -79,6 +80,8 @@ export function EndScreen({ state, onRestart }: Props) {
           <p className="end-notlooked">Nobody stood with you at the end. That was also a choice — made slowly, in small pieces.</p>
         )}
       </div>
+
+      <AfterGame runId={state.runId} />
 
       <p className="end-continues eyebrow">The full game continues here</p>
 
